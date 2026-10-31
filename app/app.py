@@ -88,6 +88,55 @@ with st.sidebar:
     st.markdown("### 🎫 IT Ticket Assistant")
     st.markdown("---")
 
+    # ── LLM Provider Config ──
+    st.markdown("### ⚙️ LLM Provider")
+
+    provider_options = ["Groq (Recommended)", "Ollama (Local)", "Custom"]
+    provider = st.selectbox("Provider", provider_options, key="llm_provider")
+
+    if provider == "Groq (Recommended)":
+        default_groq_key = os.getenv("GROQ_API_KEY", "")
+        api_key = st.text_input("Groq API Key", value=default_groq_key, type="password", key="groq_key",
+                                placeholder="gsk_...",
+                                help="Free key from https://console.groq.com")
+        groq_model = st.selectbox("Groq Model", ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"], key="groq_model")
+        if api_key:
+            import src.config as _cfg
+            _cfg.LLM_API_KEY = api_key
+            _cfg.LLM_BASE_URL = "https://api.groq.com/openai/v1"
+            _cfg.LLM_MODEL = groq_model
+            os.environ["GROQ_API_KEY"] = api_key
+            st.success(f"✅ Groq ({groq_model}) configured")
+        else:
+            st.caption("Get a free key at [console.groq.com](https://console.groq.com)")
+
+    elif provider == "Ollama (Local)":
+        ollama_model = st.text_input("Model", value="qwen2.5:7b", key="ollama_model")
+        ollama_url = st.text_input("URL", value="http://localhost:11434/v1", key="ollama_url")
+        import src.config as _cfg
+        _cfg.LLM_API_KEY = "ollama"
+        _cfg.LLM_BASE_URL = ollama_url
+        _cfg.LLM_MODEL = ollama_model
+        st.info("Ensure Ollama is running locally")
+
+    elif provider == "Custom":
+        custom_url = st.text_input("Base URL", key="custom_url",
+                                   placeholder="https://api.example.com/v1")
+        custom_key = st.text_input("API Key", type="password", key="custom_key",
+                                   placeholder="your-api-key")
+        custom_model = st.text_input("Model ID", key="custom_model",
+                                     placeholder="e.g., gpt-4o, claude-3-haiku")
+        if custom_url and custom_model:
+            import src.config as _cfg
+            _cfg.LLM_BASE_URL = custom_url
+            _cfg.LLM_API_KEY = custom_key or "none"
+            _cfg.LLM_MODEL = custom_model
+            st.success(f"✅ Custom: {custom_model}")
+        else:
+            st.caption("Enter base URL and model ID for any OpenAI-compatible API")
+
+    st.markdown("---")
+
     samples = load_sample_tickets()
     sample_names = ["(Enter manually)"] + [f"{s['id']}: {s['title'][:40]}" for s in samples]
     selected = st.selectbox("📋 Sample Tickets", sample_names)
@@ -117,21 +166,71 @@ st.markdown("---")
 
 # ── Section 1: Input ──
 
+TITLE_OPTIONS = {
+    "Network": [
+        "VPN not connecting / keeps disconnecting",
+        "WiFi connection dropping or slow",
+        "DNS resolution failure",
+        "DHCP not assigning IP address",
+        "IP address conflict on network",
+    ],
+    "Database": [
+        "Database query running very slow",
+        "Database login / access denied",
+        "Database connection timeout",
+        "Database replication or sync issue",
+        "Database backup or recovery failure",
+    ],
+    "Hardware": [
+        "Monitor display issue (flickering / no signal)",
+        "Keyboard or mouse not working",
+        "Laptop overheating / fan noise",
+        "Disk drive not recognized or slow",
+        "Memory (RAM) errors or low memory",
+    ],
+    "Software": [
+        "Email client crashing or not syncing",
+        "Operating system update failure / BSOD",
+        "Application not launching or freezing",
+        "Software license or activation issue",
+    ],
+    "Inquiry/Help": [
+        "Antivirus alert or quarantine help",
+        "Internal application access request",
+        "How-to / general IT question",
+    ],
+}
+
+flat_titles = ["-- Select an issue --"]
+for cat, titles in TITLE_OPTIONS.items():
+    for t in titles:
+        flat_titles.append(f"[{cat}] {t}")
+flat_titles.append("Other (type your own)")
+
 sample_idx = sample_names.index(selected) - 1 if selected != "(Enter manually)" else -1
 
 if sample_idx >= 0:
-    default_title = samples[sample_idx]["title"]
     default_desc = samples[sample_idx]["description"]
+    default_title_val = samples[sample_idx]["title"]
 else:
-    default_title = ""
     default_desc = ""
+    default_title_val = ""
 
-col_input1, col_input2 = st.columns([1, 2])
-with col_input1:
-    title = st.text_input("Ticket Title", value=default_title, placeholder="e.g., Can't connect to VPN")
-with col_input2:
-    description = st.text_area("Ticket Description", value=default_desc, height=120,
-                               placeholder="Describe the issue in detail...")
+title_choice = st.selectbox("Issue Type", flat_titles, key="title_dropdown")
+
+if title_choice == "Other (type your own)" or sample_idx >= 0:
+    title = st.text_input(
+        "Ticket Title",
+        value=default_title_val if sample_idx >= 0 else "",
+        placeholder="Describe the issue in a few words...",
+    )
+elif title_choice != "-- Select an issue --":
+    title = title_choice.split("] ", 1)[1]
+else:
+    title = ""
+
+description = st.text_area("Ticket Description", value=default_desc, height=120,
+                            placeholder="Describe the issue in detail...")
 
 analyze_btn = st.button("🔍 Analyze Ticket", type="primary", use_container_width=True)
 
