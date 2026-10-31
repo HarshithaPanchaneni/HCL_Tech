@@ -1,0 +1,1475 @@
+[
+  {
+    "kb_id": "KB-0001",
+    "title": "Slow SQL queries caused by missing or ineffective indexes",
+    "category": "Database",
+    "subcategory": "DB performance",
+    "symptoms": [
+      "A report or page that used to load quickly now takes several minutes.",
+      "Searches or queries time out when the table contains many records.",
+      "The database is responsive, but one particular report is consistently slow."
+    ],
+    "common_error_codes": [
+      "SQL query timeout",
+      "ORA-01013",
+      "SQL Server query timeout"
+    ],
+    "root_cause": "A frequently filtered, joined, or sorted column may lack a suitable index, or the query may not use an existing index because of its predicates or statistics. A slow query is not proof by itself that an index is missing.",
+    "diagnostic_steps": [
+      "Record the affected application, query/report name, time range, and approximate number of affected users; do not copy sensitive row data into the ticket.",
+      "In SQL Server Management Studio, inspect Query Store or the actual execution plan; for other engines, use the approved EXPLAIN/plan facility.",
+      "Check whether the plan performs a large table scan, has expensive joins/sorts, or estimates rows inaccurately.",
+      "Review recent schema, data-volume, statistics, and application changes with the DBA.",
+      "Compare the query's duration and logical reads with a known-good period."
+    ],
+    "resolution": {
+      "steps": [
+        "Capture the query identifier, execution plan, and representative timings, then send them to the DBA; do not create production indexes directly from an L1 account.",
+        "Have the DBA verify the proposed index against existing indexes, write workload, storage, and maintenance cost in a test or staging environment.",
+        "If approved, deploy the index through the normal database change process during an appropriate window.",
+        "Refresh or validate optimizer statistics using the database team's approved procedure.",
+        "Rerun the same workload and confirm latency and resource use improve without unacceptable write or locking regressions."
+      ],
+      "estimated_time": "30-90 minutes for diagnosis; implementation may require a change window",
+      "requires_admin": true
+    },
+    "prevention": "Review query plans for critical reports, maintain statistics and index-health jobs, and include representative data volumes in performance testing.",
+    "escalation_criteria": "Escalate to the DBA if a business-critical query remains slow after plan review, if blocking or resource saturation is present, if multiple services are affected, or if an index change is being considered in production.",
+    "related_kb_ids": [
+      "KB-0002",
+      "KB-0030"
+    ],
+    "tags": [
+      "database",
+      "sql",
+      "performance",
+      "indexing"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0002",
+    "title": "Database connection pool exhausted",
+    "category": "Database",
+    "subcategory": "DB performance",
+    "symptoms": [
+      "The application says it cannot connect even though the database server appears to be running.",
+      "Users see intermittent timeouts when opening pages or submitting transactions.",
+      "The problem clears briefly after an application restart, then returns."
+    ],
+    "common_error_codes": [
+      "Timeout waiting for connection from pool",
+      "Connection pool exhausted",
+      "SQLSTATE 08001"
+    ],
+    "root_cause": "The application has no available pooled connections because connections are leaked, held too long, or the configured pool is too small for current demand. Database connection limits or a slow database can produce the same symptom.",
+    "diagnostic_steps": [
+      "Check application logs for pool-wait timeouts and note the first occurrence and affected service instances.",
+      "Review pool metrics: active, idle, maximum, pending waiters, and connection-acquisition time.",
+      "Check database monitoring for connection limits, long-running sessions, locks, and resource saturation.",
+      "Compare traffic, deployment, and configuration changes with the incident start time."
+    ],
+    "resolution": {
+      "steps": [
+        "Confirm whether the problem is isolated to one application instance or affects all clients; do not repeatedly restart services.",
+        "Ask the application owner to identify long-held or unclosed connections using approved tracing or pool diagnostics.",
+        "If service restoration is required, coordinate one controlled restart of the affected application instance with its owner and record the impact.",
+        "Have the application/DBA team correct connection lifecycle handling or tune pool limits based on measured database capacity; do not simply raise the limit without review.",
+        "Verify that pool waiters return to normal and successful transactions remain stable under representative load."
+      ],
+      "estimated_time": "20-60 minutes for triage; code/configuration changes may take longer",
+      "requires_admin": true
+    },
+    "prevention": "Use connection-leak detection in non-production, close connections in finally/with blocks, alert on pool saturation, and load-test expected concurrency.",
+    "escalation_criteria": "Escalate immediately if a production service is unavailable, database-wide connection limits are reached, transactions may have been lost, or the issue returns after one coordinated recovery action.",
+    "related_kb_ids": [
+      "KB-0001",
+      "KB-0030"
+    ],
+    "tags": [
+      "database",
+      "connection-pool",
+      "timeout",
+      "application"
+    ],
+    "priority_hint": "P1",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0003",
+    "title": "Database account locked or missing required permissions",
+    "category": "Database",
+    "subcategory": "DB access",
+    "symptoms": [
+      "I can reach the application, but I get an access denied message when opening a database-backed feature.",
+      "A query that worked yesterday now says I do not have permission.",
+      "My database login appears to be locked after several failed attempts."
+    ],
+    "common_error_codes": [
+      "ORA-28000",
+      "SQL Server error 18456",
+      "SQLSTATE 28000",
+      "permission denied"
+    ],
+    "root_cause": "The account may be locked by authentication policy, disabled, absent from the required database role, or affected by a changed group membership. The exact cause must be confirmed from database audit logs and identity records.",
+    "diagnostic_steps": [
+      "Confirm the user's identity, username, database/instance, application, and exact error text; never request their password.",
+      "Check whether the account is enabled and locked in the identity provider and database account view.",
+      "Review database audit/login logs for lockout, failed-login, or authorization events at the reported time.",
+      "Compare the user's approved access request and role membership with a peer in the same job function."
+    ],
+    "resolution": {
+      "steps": [
+        "Verify that the request is from the account owner and that the required access is approved by the data/application owner.",
+        "If locked, have an authorized DBA or identity administrator unlock the account using the platform's approved procedure after checking for repeated/automated failed attempts.",
+        "If a role is missing, request the minimum approved database role; do not grant broad roles such as database owner or administrator as a workaround.",
+        "Ask the user to sign in again and perform the originally failing action.",
+        "Record the approved role change and verify the issue is resolved."
+      ],
+      "estimated_time": "15-45 minutes after approval",
+      "requires_admin": true
+    },
+    "prevention": "Use role-based access groups, periodic access reviews, documented joiner/mover/leaver workflows, and alerts for repeated failed logins.",
+    "escalation_criteria": "Escalate if the account is privileged, lockouts recur, unauthorized access is suspected, the required approval is missing, or multiple accounts are affected.",
+    "related_kb_ids": [
+      "KB-0004",
+      "KB-0025"
+    ],
+    "tags": [
+      "database",
+      "access",
+      "account-lockout",
+      "permissions"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0004",
+    "title": "Database login fails because credentials expired or rotated",
+    "category": "Database",
+    "subcategory": "DB access",
+    "symptoms": [
+      "My database login worked before, but I am now told the password has expired.",
+      "A scheduled job or application stopped connecting after a credential change.",
+      "I can sign in to other systems but not to this database."
+    ],
+    "common_error_codes": [
+      "ORA-28001",
+      "password expired",
+      "SQL Server error 18456"
+    ],
+    "root_cause": "The user's password may have expired, or an application/service is still using an old secret after a credential rotation. A disabled account or identity-provider issue can look similar.",
+    "diagnostic_steps": [
+      "Capture the database name, login name, affected application/job, timestamp, and exact error without collecting any secret.",
+      "Determine whether the failing identity is a human account, service account, or application-managed secret.",
+      "Check the approved identity/vault record for expiry or a recent rotation event.",
+      "Check whether other users or services are failing with the same database endpoint."
+    ],
+    "resolution": {
+      "steps": [
+        "For a human account, direct the user to the organization's approved password-reset or identity portal and complete the required verification.",
+        "For a service account, have the owner rotate the secret through the enterprise vault and update the dependent application configuration using the approved deployment process.",
+        "Restart or reload only the affected service if its documented secret-refresh procedure requires it; coordinate before doing so.",
+        "Verify a fresh database connection and the affected application/job; monitor the next scheduled run.",
+        "Confirm that no password, token, or connection string containing a secret was added to the ticket or logs."
+      ],
+      "estimated_time": "15-60 minutes",
+      "requires_admin": true
+    },
+    "prevention": "Track service-account ownership and expiry, use a secrets vault, automate rotation where supported, and document dependent services before rotating credentials.",
+    "escalation_criteria": "Escalate if a privileged/service credential is involved without a known owner, rotation may affect production, multiple systems fail, or credential compromise is suspected.",
+    "related_kb_ids": [
+      "KB-0003",
+      "KB-0002"
+    ],
+    "tags": [
+      "database",
+      "authentication",
+      "credentials",
+      "secret-rotation"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0005",
+    "title": "Database backup job failed or restore is incomplete",
+    "category": "Database",
+    "subcategory": "DB backup/restore",
+    "symptoms": [
+      "The backup report says the job failed or did not finish.",
+      "A restore completed with warnings, or the restored database is missing recent records.",
+      "The team cannot confirm that a usable backup exists for the required recovery point."
+    ],
+    "common_error_codes": [
+      "SQL Server error 3201",
+      "BACKUP DATABASE terminated abnormally",
+      "restore failed",
+      "backup checksum error"
+    ],
+    "root_cause": "A backup may fail because of insufficient storage, inaccessible backup media, permissions, network interruption, corruption, or an incomplete backup chain. A restore can also be incomplete if required differential or log backups are missing.",
+    "diagnostic_steps": [
+      "Check the backup scheduler/job history and database engine logs for the first failing step and exact error.",
+      "Confirm free space, destination availability, service-account access, and backup-media connectivity.",
+      "Identify the last known successful full, differential, and transaction-log backups and their timestamps.",
+      "Review restore logs and verify whether recovery completed; do not infer success from a job's start status.",
+      "Check the backup catalog/retention record and whether checksum or integrity verification failed."
+    ],
+    "resolution": {
+      "steps": [
+        "Preserve the failed job logs and notify the DBA/on-call owner; do not overwrite backup files or delete older recovery points.",
+        "If storage is full or unavailable, have the storage/DBA team restore capacity or permissions through the approved change process.",
+        "Rerun the backup only after the cause is understood and the destination is verified; capture the new job result.",
+        "For a restore, use an isolated target or approved recovery environment and apply the complete required backup chain in the correct order.",
+        "Run the database's supported integrity check and validate expected tables, row counts, and recovery-point timestamp with the data owner.",
+        "Document the last verified restorable backup and any gap in recovery coverage."
+      ],
+      "estimated_time": "1-4 hours; recovery validation may take longer",
+      "requires_admin": true
+    },
+    "prevention": "Monitor backup success and capacity, alert on missed schedules, retain multiple recovery points, and regularly perform documented test restores.",
+    "escalation_criteria": "Escalate immediately for any suspected data loss/corruption, missed production recovery objective, failed integrity check, missing backup chain, or inability to establish a verified restore point.",
+    "related_kb_ids": [
+      "KB-0001",
+      "KB-0002"
+    ],
+    "tags": [
+      "database",
+      "backup",
+      "restore",
+      "data-integrity"
+    ],
+    "priority_hint": "P1",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0006",
+    "title": "Laptop fails to boot or repeatedly shows a blue screen",
+    "category": "Hardware",
+    "subcategory": "Laptop",
+    "symptoms": [
+      "My laptop switches on but Windows never reaches the sign-in screen.",
+      "I see a blue screen and the laptop restarts in a loop.",
+      "The device became unresponsive after an update or hardware change."
+    ],
+    "common_error_codes": [
+      "INACCESSIBLE_BOOT_DEVICE",
+      "CRITICAL_PROCESS_DIED",
+      "DRIVER_IRQL_NOT_LESS_OR_EQUAL"
+    ],
+    "root_cause": "A failed update, incompatible driver, corrupted system files, storage fault, or other hardware problem can prevent startup. The stop code and recent changes help distinguish the cause.",
+    "diagnostic_steps": [
+      "Record the exact stop code, restart pattern, and any recent update, driver, peripheral, or hardware change.",
+      "Disconnect nonessential USB devices and docks, then try one normal restart.",
+      "If Windows Recovery Environment opens, note the available Startup Repair and Safe Mode options.",
+      "Check the manufacturer's hardware diagnostics if available; do not repeatedly force power cycles if the drive is making unusual noises.",
+      "Ask whether important local files are backed up before any reset or recovery operation."
+    ],
+    "resolution": {
+      "steps": [
+        "Disconnect external peripherals and power the laptop off fully; reconnect only the approved power adapter and try one boot.",
+        "If offered, run Windows Startup Repair from Windows Recovery Environment > Troubleshoot > Advanced options.",
+        "If the device starts in Safe Mode, review recently installed drivers/updates in Settings > Windows Update > Update history or Device Manager; roll back only the clearly implicated change.",
+        "Run manufacturer diagnostics and, where Windows starts, use an elevated terminal for `sfc /scannow`; record any reported failures.",
+        "Do not choose Reset this PC, format a drive, or reinstall Windows until the data owner confirms backup/recovery requirements.",
+        "If startup remains blocked, collect the stop code and diagnostic results for hardware/endpoint support."
+      ],
+      "estimated_time": "30-90 minutes",
+      "requires_admin": true
+    },
+    "prevention": "Install approved firmware and drivers, keep backups current, avoid unapproved utilities, and leave adequate disk space for updates.",
+    "escalation_criteria": "Escalate if the device remains in a boot loop after Startup Repair, diagnostics report storage/memory failure, the laptop overheats, BitLocker recovery is required, or unbacked-up data may be at risk.",
+    "related_kb_ids": [
+      "KB-0007",
+      "KB-0011"
+    ],
+    "tags": [
+      "hardware",
+      "laptop",
+      "boot",
+      "bsod"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0007",
+    "title": "Laptop battery drains quickly or will not charge",
+    "category": "Hardware",
+    "subcategory": "Laptop",
+    "symptoms": [
+      "The battery percentage drops much faster than it used to.",
+      "The laptop stays at the same percentage or says plugged in, not charging.",
+      "The device shuts down soon after the charger is unplugged."
+    ],
+    "common_error_codes": [
+      "Battery not detected",
+      "Plugged in, not charging",
+      "AC adapter not recognized"
+    ],
+    "root_cause": "Battery wear, an incorrect or underpowered adapter, a damaged cable/port, firmware or power-management issues, or unusually high system load can cause charging and runtime problems.",
+    "diagnostic_steps": [
+      "Check that the adapter and cable are the approved wattage and are firmly connected to a known-good outlet.",
+      "Inspect the connector and cable for visible damage, heat, or looseness; stop using damaged equipment.",
+      "On Windows, run `powercfg /batteryreport` and open the generated HTML report to compare design and full-charge capacity.",
+      "Check Settings > System > Power & battery for energy use by app and review manufacturer battery diagnostics.",
+      "Test with a known-good approved charger if available; do not use an unapproved adapter."
+    ],
+    "resolution": {
+      "steps": [
+        "Close unusually power-hungry applications and temporarily select Settings > System > Power & battery > Power mode appropriate for the task.",
+        "Restart once and install approved operating-system and manufacturer power-management updates.",
+        "Use the manufacturer's battery health utility to confirm battery condition and adapter recognition.",
+        "If the battery is degraded or fails diagnostics, raise a hardware service request for an approved battery replacement.",
+        "Do not open, puncture, or attempt to repair a swollen or damaged battery; power down and follow the organization's battery-safety procedure."
+      ],
+      "estimated_time": "15-45 minutes for diagnosis; repair depends on parts",
+      "requires_admin": false
+    },
+    "prevention": "Use the supplied charger, avoid sustained high temperatures, keep firmware current, and review battery health during routine device checks.",
+    "escalation_criteria": "Escalate immediately for a swollen/hot battery, burning smell, damaged charger, or repeated unexpected shutdowns; otherwise escalate if diagnostics indicate battery or charging-port failure.",
+    "related_kb_ids": [
+      "KB-0006",
+      "KB-0011"
+    ],
+    "tags": [
+      "hardware",
+      "laptop",
+      "battery",
+      "charging"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0008",
+    "title": "External monitor is not detected or displays incorrectly",
+    "category": "Hardware",
+    "subcategory": "Monitor",
+    "symptoms": [
+      "My external monitor says no signal even though the laptop is on.",
+      "The screen is detected but stays black, flickers, or uses the wrong resolution.",
+      "The monitor works with another computer but not with my laptop."
+    ],
+    "common_error_codes": [
+      "No signal",
+      "Display connection might be limited",
+      "Unsupported mode"
+    ],
+    "root_cause": "The selected monitor input, cable/adapter, dock, display mode, port capability, or graphics driver may be preventing a stable display connection.",
+    "diagnostic_steps": [
+      "Confirm the monitor is powered on and its on-screen input source matches the connected HDMI/DisplayPort/USB-C input.",
+      "Reseat both ends of the cable and test a known-good cable or direct laptop connection, bypassing the dock if possible.",
+      "On Windows, press `Win+P` and select Extend or Duplicate; open Settings > System > Display and select Detect.",
+      "Check Device Manager > Display adapters and Monitors for warning icons, and note the monitor model and resolution.",
+      "Test the monitor and cable with another known-good device to isolate the failing component."
+    ],
+    "resolution": {
+      "steps": [
+        "Select the correct input source from the monitor's on-screen menu and power-cycle the monitor once.",
+        "Reconnect the cable directly to the laptop and use `Win+P` to choose the required display mode.",
+        "In Settings > System > Display, select the detected display and choose a supported resolution and refresh rate.",
+        "Install graphics and dock drivers only from the organization's software catalog or device manufacturer's approved support channel.",
+        "Reconnect the dock after the direct connection works, then verify the display remains stable."
+      ],
+      "estimated_time": "10-30 minutes",
+      "requires_admin": false
+    },
+    "prevention": "Use certified cables/adapters, label desk connections, keep approved graphics/dock drivers current, and avoid unsupported refresh-rate settings.",
+    "escalation_criteria": "Escalate if multiple known-good cables and devices fail, the port is physically damaged, the display flickers across devices, or the issue affects a shared meeting-room system.",
+    "related_kb_ids": [
+      "KB-0011",
+      "KB-0006"
+    ],
+    "tags": [
+      "hardware",
+      "monitor",
+      "display",
+      "hdmi",
+      "displayport"
+    ],
+    "priority_hint": "P3",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0009",
+    "title": "Printer is offline or print jobs remain stuck in the queue",
+    "category": "Hardware",
+    "subcategory": "Printer",
+    "symptoms": [
+      "My document stays in the print queue and never comes out.",
+      "The printer shows Offline even though it is powered on.",
+      "Other people cannot print to the same office printer."
+    ],
+    "common_error_codes": [
+      "Printer offline",
+      "Print job stuck",
+      "0x0000011b"
+    ],
+    "root_cause": "The printer may be disconnected, asleep, assigned the wrong port, unreachable over the network, or blocked by a stalled Windows Print Spooler queue or driver.",
+    "diagnostic_steps": [
+      "Check the printer's display for paper, toner, cover, or network alerts and confirm it is powered on.",
+      "Print a test/status page from the printer panel, if available, to distinguish a printer fault from a PC queue issue.",
+      "Confirm the PC and printer are on the approved network and record the printer name/IP and whether other users are affected.",
+      "Open Settings > Bluetooth & devices > Printers & scanners and inspect the queue and selected default printer.",
+      "Check whether the issue is limited to one document, one user, or all users."
+    ],
+    "resolution": {
+      "steps": [
+        "Cancel only the affected user's stuck jobs from the print queue and retry with a small test document.",
+        "Verify that the selected printer is the correct office queue and that Use Printer Offline is not enabled in the queue's Printer menu.",
+        "If the printer is networked, confirm it is reachable using the approved printer-management tool; do not change its IP address yourself.",
+        "If the local queue remains stuck, an authorized support analyst can restart the Print Spooler from Services (`services.msc`) after warning users that queued jobs may be cleared.",
+        "Re-add the printer from the organization's approved printer catalog or print server if its queue configuration is corrupted.",
+        "Print a Windows test page and confirm the queue returns to Ready."
+      ],
+      "estimated_time": "15-40 minutes",
+      "requires_admin": true
+    },
+    "prevention": "Use the centrally deployed printer queue and approved driver, keep printer firmware managed, and remove obsolete queues through support.",
+    "escalation_criteria": "Escalate if multiple users or floors are affected, the printer reports a hardware/network fault, jobs contain sensitive documents, or the queue remains stuck after one controlled spooler restart.",
+    "related_kb_ids": [
+      "KB-0010",
+      "KB-0023"
+    ],
+    "tags": [
+      "hardware",
+      "printer",
+      "print-queue",
+      "spooler"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0010",
+    "title": "Printer produces blank pages or garbled characters",
+    "category": "Hardware",
+    "subcategory": "Printer",
+    "symptoms": [
+      "The printer feeds paper but the pages come out blank.",
+      "Printed documents contain symbols, random characters, or incorrect formatting.",
+      "The printer's own test page looks fine, but computer printouts are wrong."
+    ],
+    "common_error_codes": [
+      "PCL XL error",
+      "PostScript error",
+      "blank print output"
+    ],
+    "root_cause": "Low/empty toner or ink, a print-driver mismatch, incompatible printer language, corrupted job data, or an application-specific print setting can produce blank or garbled output.",
+    "diagnostic_steps": [
+      "Print a configuration/test page directly from the printer to check toner/ink and the printer hardware.",
+      "Print the same simple text document from another application or workstation to isolate the source.",
+      "Check the printer model, deployed driver name/version, and whether the queue uses PCL, PostScript, or a vendor-specific driver.",
+      "Review the queue for repeated failed jobs and note whether only PDFs or a particular document type is affected."
+    ],
+    "resolution": {
+      "steps": [
+        "Check toner/ink level, cartridge seating, protective seals on a new cartridge, and paper type; follow the device manual for safe handling.",
+        "Clear the affected user's failed job and print a one-page test document.",
+        "If the printer test page is correct but PC output is not, have support deploy the exact approved driver for the printer model and operating system.",
+        "For PDFs, retry using the organization's supported PDF viewer and a standard print setting such as Print as image only when approved by support.",
+        "Verify output from two applications and retain a sample page if the issue persists."
+      ],
+      "estimated_time": "15-45 minutes",
+      "requires_admin": true
+    },
+    "prevention": "Maintain consumables, deploy model-matched drivers centrally, and test driver changes on a pilot queue before broad rollout.",
+    "escalation_criteria": "Escalate if the printer's own test page is blank/garbled, there is toner leakage or a hardware warning, or a shared queue is affected for multiple users.",
+    "related_kb_ids": [
+      "KB-0009",
+      "KB-0027"
+    ],
+    "tags": [
+      "hardware",
+      "printer",
+      "driver",
+      "print-quality"
+    ],
+    "priority_hint": "P3",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0011",
+    "title": "Docking station does not recognize connected peripherals",
+    "category": "Hardware",
+    "subcategory": "Docking station",
+    "symptoms": [
+      "My keyboard, mouse, monitor, or network cable stops working when connected through the dock.",
+      "The laptop charges through the dock but does not detect its monitor or USB devices.",
+      "The dock works intermittently after reconnecting the USB-C cable."
+    ],
+    "common_error_codes": [
+      "USB device not recognized",
+      "Thunderbolt device functionality may be limited",
+      "Dock firmware update required"
+    ],
+    "root_cause": "The dock may lack sufficient power, use an unsupported USB-C/Thunderbolt mode, have a loose cable, or require an approved firmware/driver update. Not every USB-C port supports video or docking features.",
+    "diagnostic_steps": [
+      "Record the laptop and dock models, dock power-supply rating, cable type, and affected peripherals.",
+      "Check whether the laptop's connected port supports the dock's required USB-C/DisplayPort/Thunderbolt features.",
+      "Disconnect peripherals and inspect Device Manager > Universal Serial Bus controllers and Network adapters for warnings.",
+      "Test the dock with the supplied power adapter and a direct laptop connection; test one peripheral at a time.",
+      "Check the organization's device-management portal for an approved dock firmware or driver update."
+    ],
+    "resolution": {
+      "steps": [
+        "Disconnect the dock from the laptop and its power adapter for 30 seconds, then reconnect power before connecting the laptop.",
+        "Use the original approved dock cable and power supply; connect the dock directly rather than through another hub.",
+        "Reconnect one peripheral at a time and check whether it appears in Device Manager or Settings > Bluetooth & devices.",
+        "Install only the approved dock, chipset, graphics, and Thunderbolt/USB-C updates from the company catalog or manufacturer support channel.",
+        "Retest display, USB, Ethernet, and charging separately and document any function that remains unavailable."
+      ],
+      "estimated_time": "15-40 minutes",
+      "requires_admin": false
+    },
+    "prevention": "Use the dock's supplied power adapter and certified cable, keep approved firmware current, and verify laptop/dock compatibility before deployment.",
+    "escalation_criteria": "Escalate if the dock or connector is hot/damaged, firmware update fails, multiple known-good docks fail on the same laptop, or a fleet-wide compatibility issue appears.",
+    "related_kb_ids": [
+      "KB-0008",
+      "KB-0007"
+    ],
+    "tags": [
+      "hardware",
+      "docking-station",
+      "usb-c",
+      "peripherals"
+    ],
+    "priority_hint": "P3",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0012",
+    "title": "Bluetooth keyboard or mouse disconnects or will not pair",
+    "category": "Hardware",
+    "subcategory": "Keyboard/Mouse",
+    "symptoms": [
+      "My wireless keyboard or mouse is not responding or keeps disconnecting.",
+      "The device does not appear when I try to pair it.",
+      "The mouse pointer freezes even though the laptop is working."
+    ],
+    "common_error_codes": [
+      "Bluetooth device not found",
+      "Pairing failed",
+      "Driver error"
+    ],
+    "root_cause": "Low batteries, pairing with another host, radio interference, disabled Bluetooth, or a Bluetooth driver/power-management issue can interrupt the connection.",
+    "diagnostic_steps": [
+      "Replace or recharge batteries and check the device's power/pairing indicator.",
+      "Confirm Bluetooth is enabled in Settings > Bluetooth & devices and Airplane mode is off.",
+      "Move the device close to the laptop and temporarily disconnect it from other paired hosts.",
+      "Check Device Manager > Bluetooth for warning icons and review whether other Bluetooth devices also disconnect."
+    ],
+    "resolution": {
+      "steps": [
+        "Turn the keyboard/mouse off and on, then use its documented pairing button or sequence.",
+        "In Settings > Bluetooth & devices, remove the stale pairing entry and select Add device > Bluetooth to pair again.",
+        "Test with a fresh battery and move away from likely interference sources such as USB 3 hubs or crowded wireless equipment.",
+        "Run the Windows Bluetooth troubleshooter if available and install approved Bluetooth driver updates.",
+        "Test the device on another approved computer to determine whether the peripheral or laptop is at fault."
+      ],
+      "estimated_time": "10-25 minutes",
+      "requires_admin": false
+    },
+    "prevention": "Keep batteries charged, pair peripherals to only the intended host when possible, and use approved drivers and compatible USB adapters.",
+    "escalation_criteria": "Escalate if multiple Bluetooth devices fail on the same laptop after driver checks, the Bluetooth adapter is missing, or the peripheral is physically damaged.",
+    "related_kb_ids": [
+      "KB-0011",
+      "KB-0006"
+    ],
+    "tags": [
+      "hardware",
+      "bluetooth",
+      "keyboard",
+      "mouse"
+    ],
+    "priority_hint": "P3",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0013",
+    "title": "VoIP phone or headset has poor audio, echo, or one-way sound",
+    "category": "Hardware",
+    "subcategory": "Phone/headset",
+    "symptoms": [
+      "People say my voice is breaking up or sounds robotic during calls.",
+      "I can hear the other person, but they cannot hear me, or the reverse.",
+      "I hear echo, static, or long delays during meetings."
+    ],
+    "common_error_codes": [
+      "SIP 408 Request Timeout",
+      "RTP packet loss",
+      "Device unavailable"
+    ],
+    "root_cause": "Incorrect microphone/speaker selection, headset hardware, application audio settings, network packet loss/jitter, or a voice-service issue can degrade call quality.",
+    "diagnostic_steps": [
+      "Check whether the issue occurs in one calling application, all applications, or only with one headset/phone.",
+      "In the calling application's audio settings, confirm the selected microphone and speaker and run its test call.",
+      "Disconnect/reconnect the headset and test with an approved alternate headset or device.",
+      "Record the call time, wired/Wi-Fi connection, location, and whether other participants experienced the same issue.",
+      "Ask network/voice support to inspect packet loss, jitter, latency, and service alerts if symptoms are widespread."
+    ],
+    "resolution": {
+      "steps": [
+        "Set the intended microphone and speaker in both the operating system and calling application; avoid selecting a disconnected device.",
+        "Reconnect the headset directly to the laptop, bypassing an unpowered hub, and confirm its mute control is off.",
+        "Close other applications that may be using the microphone and run the application's audio test again.",
+        "Move to a stable approved network connection; do not bypass corporate network controls or use an unapproved voice service.",
+        "If the issue affects multiple users, provide call timestamps and location to the voice/network team for QoS and service-path analysis."
+      ],
+      "estimated_time": "10-30 minutes",
+      "requires_admin": false
+    },
+    "prevention": "Use approved headsets, keep collaboration clients updated, test audio before important calls, and maintain voice-network QoS monitoring.",
+    "escalation_criteria": "Escalate if emergency calling is affected, multiple users have one-way audio, packet loss/jitter is sustained, or the phone cannot register to the corporate voice service.",
+    "related_kb_ids": [
+      "KB-0021",
+      "KB-0011"
+    ],
+    "tags": [
+      "hardware",
+      "voip",
+      "headset",
+      "audio",
+      "network"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0014",
+    "title": "How to request installation of new or additional software",
+    "category": "Inquiry/Help",
+    "subcategory": "General inquiry",
+    "symptoms": [
+      "I need an application installed for my work but cannot install it myself.",
+      "How do I request a license or approval for a new tool?",
+      "The software I need is not listed in the company portal."
+    ],
+    "common_error_codes": [],
+    "root_cause": "Enterprise software installation is normally controlled through a service catalog so licensing, security, privacy, compatibility, and business approval can be checked before deployment. The exact approval path is organization-specific.",
+    "diagnostic_steps": [
+      "Ask for the exact application name, publisher, version, and official product URL.",
+      "Confirm the business purpose, intended users, device/operating-system compatibility, and whether a license is already available.",
+      "Check the internal service catalog or software center for an existing approved package.",
+      "Review the organization's software request policy for manager, budget, security, or data-owner approval requirements."
+    ],
+    "resolution": {
+      "steps": [
+        "Open the organization's IT service portal and choose the Software Request or Application Access category.",
+        "Enter the application name, publisher, version, business justification, number of users, and required date.",
+        "Attach the manager or budget approval required by the internal workflow; do not attach license keys or credentials.",
+        "Submit the request and retain its ticket number; the software/security team will review licensing and risk.",
+        "After approval, install from the company portal or follow the deployment instructions supplied by IT; do not download an unapproved installer."
+      ],
+      "estimated_time": "5-15 minutes to submit; approval time varies",
+      "requires_admin": false
+    },
+    "prevention": "Use the approved software catalog, request licenses before project deadlines, and include business purpose and user scope in the initial request.",
+    "escalation_criteria": "Escalate through the service portal if a business-critical deadline is at risk, a request is pending beyond the published service target, or the application handles regulated/confidential data and its approval path is unclear.",
+    "related_kb_ids": [
+      "KB-0026",
+      "KB-0028"
+    ],
+    "tags": [
+      "software-request",
+      "license",
+      "service-catalog",
+      "inquiry"
+    ],
+    "priority_hint": "P4",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0015",
+    "title": "Set up corporate email on an approved mobile device",
+    "category": "Inquiry/Help",
+    "subcategory": "How-to question",
+    "symptoms": [
+      "I want to read my work email on my phone but do not know how to set it up.",
+      "The mail app keeps asking me to sign in or says the device is not compliant.",
+      "My calendar and contacts do not sync on my mobile device."
+    ],
+    "common_error_codes": [
+      "Account setup incomplete",
+      "Device not compliant",
+      "Modern authentication required"
+    ],
+    "root_cause": "The device may not be enrolled in mobile device management, the user may be signing in through an unsupported mail client, or modern authentication/MFA setup may be incomplete.",
+    "diagnostic_steps": [
+      "Confirm the phone is an organization-approved iOS or Android version and is not rooted/jailbroken.",
+      "Check the organization's mobile-device policy and whether the device must be enrolled in MDM/Company Portal first.",
+      "Confirm the user can sign in to webmail through the approved browser and complete MFA there.",
+      "Check the service portal for current email-client and mobile-enrollment instructions."
+    ],
+    "resolution": {
+      "steps": [
+        "Install the organization's approved mail app (for example, Microsoft Outlook) from the official app store.",
+        "If required by policy, install the official Company Portal/MDM app and complete device enrollment using the organization's instructions.",
+        "Open the mail app, select Add account, and sign in with the corporate email address through the organization's authentication page.",
+        "Complete MFA and accept only the device-management permissions described by the official enrollment flow.",
+        "Allow the compliance check to finish, then verify inbox, calendar, and contacts synchronization.",
+        "Report a lost or stolen device immediately through the security/service desk so the approved access-revocation or remote-wipe process can be started."
+      ],
+      "estimated_time": "15-30 minutes",
+      "requires_admin": false
+    },
+    "prevention": "Keep the mobile OS and approved mail app updated, maintain MDM compliance, and report lost devices promptly.",
+    "escalation_criteria": "Escalate if enrollment requests unexpected permissions, the phone is reported lost, sign-in prompts look suspicious, or corporate data remains accessible on a noncompliant device.",
+    "related_kb_ids": [
+      "KB-0017",
+      "KB-0004"
+    ],
+    "tags": [
+      "email",
+      "mobile",
+      "mdm",
+      "outlook",
+      "how-to"
+    ],
+    "priority_hint": "P3",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0016",
+    "title": "Ask about IT asset refresh, repair, or device replacement eligibility",
+    "category": "Inquiry/Help",
+    "subcategory": "General inquiry",
+    "symptoms": [
+      "How old does my laptop need to be before I can request a replacement?",
+      "My device is slow or damaged and I want to know whether it qualifies for refresh.",
+      "I need a different device model for my role and want to understand the policy."
+    ],
+    "common_error_codes": [],
+    "root_cause": "Refresh eligibility is determined by the organization's asset lifecycle, warranty, device condition, role requirements, budget, and current replacement policy. The policy and timelines vary by organization and are not defined in this knowledge base.",
+    "diagnostic_steps": [
+      "Record the asset tag, device model, assigned user, and purchase/deployment date from the approved asset portal.",
+      "Check warranty status and whether the device has an open repair or incident ticket.",
+      "Document the business impact, recurring faults, performance limitations, or accessibility/role requirements.",
+      "Review the current internal IT asset lifecycle and refresh policy; do not promise a replacement date based on device age alone."
+    ],
+    "resolution": {
+      "steps": [
+        "Open the IT service portal and select Hardware, Asset, or Device Replacement inquiry.",
+        "Provide the asset tag, location, symptoms/condition, and the work requirement that the current device cannot meet.",
+        "Attach relevant incident numbers and manager approval if the internal policy requires it.",
+        "Ask IT Asset Management to confirm eligibility, available models, expected lead time, and whether repair or loan equipment is the correct path.",
+        "Return or securely erase the old device only after receiving official collection and data-transfer instructions."
+      ],
+      "estimated_time": "5-15 minutes to submit; assessment time varies",
+      "requires_admin": false
+    },
+    "prevention": "Keep asset records accurate, report damage early, use approved accessories, and check the internal refresh policy during annual planning.",
+    "escalation_criteria": "Escalate if the device is unsafe, physically damaged, repeatedly unavailable for critical work, contains data that must be preserved, or the business requires an accessibility accommodation.",
+    "related_kb_ids": [
+      "KB-0006",
+      "KB-0007"
+    ],
+    "tags": [
+      "asset-management",
+      "laptop",
+      "refresh-policy",
+      "replacement"
+    ],
+    "priority_hint": "P4",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0017",
+    "title": "Enroll or replace a multi-factor authentication method",
+    "category": "Inquiry/Help",
+    "subcategory": "How-to question",
+    "symptoms": [
+      "I am asked for a verification code but do not know how to set up MFA.",
+      "I changed phones and can no longer approve sign-in requests.",
+      "I cannot access my account because my authenticator device is unavailable."
+    ],
+    "common_error_codes": [
+      "MFA registration required",
+      "Authenticator approval failed",
+      "Additional authentication required"
+    ],
+    "root_cause": "The account may not have a registered second factor, or the registered device may have changed, been lost, or become unavailable. Recovery must follow the organization's identity-verification policy.",
+    "diagnostic_steps": [
+      "Confirm the user is on the official company sign-in or security-information portal; check the domain before entering credentials.",
+      "Check the service portal's MFA instructions and supported authenticator methods.",
+      "Determine whether the user still has access to an existing registered method or needs a verified recovery process.",
+      "Check identity-service status if multiple users report MFA failures."
+    ],
+    "resolution": {
+      "steps": [
+        "From a trusted device, open the official company security-information portal or follow the identity team's published setup link.",
+        "Sign in and complete the existing verification step; select Add sign-in method and choose an organization-approved option.",
+        "For an authenticator app, install it only from the official app store, scan the portal's QR code, and approve the test notification or enter the displayed code.",
+        "Register an approved backup method if policy allows and securely store any recovery codes as instructed by IT.",
+        "For a lost or replaced phone, use the service desk's identity-verification and factor-reset process; do not ask support to bypass MFA without verification.",
+        "Complete a test sign-in in a new session and confirm the old/lost method has been removed when appropriate."
+      ],
+      "estimated_time": "10-25 minutes; recovery may require service-desk verification",
+      "requires_admin": false
+    },
+    "prevention": "Register a permitted backup method, update MFA when changing phones, protect recovery codes, and never share approval prompts or one-time codes.",
+    "escalation_criteria": "Escalate immediately for suspected MFA fatigue/phishing, an unexpected approval prompt, lost device with active corporate access, or inability to verify the account owner's identity.",
+    "related_kb_ids": [
+      "KB-0015",
+      "KB-0004"
+    ],
+    "tags": [
+      "mfa",
+      "authentication",
+      "identity",
+      "security",
+      "how-to"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0018",
+    "title": "VPN will not connect or repeatedly disconnects",
+    "category": "Network",
+    "subcategory": "VPN",
+    "symptoms": [
+      "I cannot connect to the company VPN from home or while traveling.",
+      "The VPN connects but disconnects every few minutes.",
+      "I receive a sign-in or gateway error even though my internet works."
+    ],
+    "common_error_codes": [
+      "VPN connection failed",
+      "IKEv2 error",
+      "Authentication failed",
+      "Gateway not responding"
+    ],
+    "root_cause": "An unstable local connection, expired authentication/certificate, incorrect system time, outdated VPN client, unavailable gateway, or conflicting network route can prevent a stable VPN session.",
+    "diagnostic_steps": [
+      "Confirm ordinary internet access by opening an approved public site without the VPN.",
+      "Record the VPN client name/version, gateway, exact error, connection time, and whether other users are affected.",
+      "Check system date/time and whether the user can authenticate to other corporate services.",
+      "Review the VPN client status/logs and the organization's service-health notice for gateway incidents.",
+      "Test once on another trusted network, such as an approved mobile hotspot, if policy permits."
+    ],
+    "resolution": {
+      "steps": [
+        "Restart the VPN client and reconnect once using the organization's published gateway/profile; avoid repeated retries that may trigger account lockout.",
+        "Confirm automatic date/time is enabled and complete the normal corporate sign-in/MFA flow.",
+        "Install the approved VPN client update from the company portal if the installed version is out of date.",
+        "If the client reports a certificate or device-compliance problem, use the official device-enrollment or certificate-renewal workflow; do not install certificates from email attachments.",
+        "Capture the client diagnostic bundle and timestamp if the connection still drops, then send it to network support."
+      ],
+      "estimated_time": "15-40 minutes",
+      "requires_admin": false
+    },
+    "prevention": "Keep the approved VPN client current, maintain device compliance and correct system time, and use stable networks for work sessions.",
+    "escalation_criteria": "Escalate if the VPN gateway is unavailable, many users are affected, access to a critical service is blocked, authentication/certificate errors persist after the approved recovery flow, or repeated drops interrupt active transactions.",
+    "related_kb_ids": [
+      "KB-0019",
+      "KB-0023"
+    ],
+    "tags": [
+      "network",
+      "vpn",
+      "remote-access",
+      "connectivity"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0019",
+    "title": "VPN is slow because of routing, gateway load, or tunnel configuration",
+    "category": "Network",
+    "subcategory": "VPN",
+    "symptoms": [
+      "Web pages and file transfers are much slower while the VPN is connected.",
+      "Only some internal applications are slow over VPN.",
+      "Video calls or large downloads become unreliable when connected remotely."
+    ],
+    "common_error_codes": [
+      "High VPN latency",
+      "Throughput below baseline",
+      "Packet loss"
+    ],
+    "root_cause": "VPN gateway load, long network paths, packet loss, endpoint performance, or routing all traffic through the tunnel can reduce performance. Split tunneling is a centrally managed security decision and should not be changed by end users.",
+    "diagnostic_steps": [
+      "Compare latency and throughput with and without VPN for approved test destinations; record time and network type.",
+      "Check whether all traffic or only a specific internal application is slow.",
+      "Run `ping` to the approved internal gateway/application host and note latency/loss; use `tracert` only where permitted.",
+      "Check endpoint CPU, memory, and Wi-Fi signal while the VPN is active.",
+      "Ask network operations to compare gateway utilization, tunnel routes, and concurrent-user metrics."
+    ],
+    "resolution": {
+      "steps": [
+        "Disconnect bandwidth-heavy nonessential activity and move to a stable approved network connection.",
+        "Restart the VPN client once and confirm the latest approved client version is installed.",
+        "Test the affected application and a second internal resource to identify whether the issue is destination-specific.",
+        "Provide timestamp, client logs, destination, and test results to network operations for route/gateway analysis.",
+        "If split tunneling is being considered, submit a security/network change request describing required destinations and business justification; do not alter routes or tunnel settings locally."
+      ],
+      "estimated_time": "20-60 minutes for diagnosis; network changes require review",
+      "requires_admin": true
+    },
+    "prevention": "Monitor gateway capacity and route performance, maintain approved client versions, and document application traffic requirements before VPN changes.",
+    "escalation_criteria": "Escalate if performance prevents critical work, packet loss is sustained, many remote users are affected, or a split-tunnel/firewall change is proposed.",
+    "related_kb_ids": [
+      "KB-0018",
+      "KB-0022"
+    ],
+    "tags": [
+      "network",
+      "vpn",
+      "latency",
+      "split-tunneling"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0020",
+    "title": "Cannot authenticate to the corporate Wi-Fi network",
+    "category": "Network",
+    "subcategory": "WiFi",
+    "symptoms": [
+      "My laptop sees the company Wi-Fi name but will not connect.",
+      "The network keeps asking for my credentials or says they are incorrect.",
+      "I can connect to guest Wi-Fi but not to the corporate SSID."
+    ],
+    "common_error_codes": [
+      "Cannot connect to this network",
+      "802.1X authentication failed",
+      "Certificate expired"
+    ],
+    "root_cause": "The device may have stale saved credentials, an expired/missing device certificate, an account restriction, an incorrect system clock, or an 802.1X/RADIUS authentication issue.",
+    "diagnostic_steps": [
+      "Confirm the correct corporate SSID and whether the problem affects one device or several users.",
+      "Check date/time, account status, and whether the device is enrolled and compliant in the organization's management portal.",
+      "On Windows, run `netsh wlan show interfaces` and review WLAN-AutoConfig events in Event Viewer for the failure reason.",
+      "Check whether the device has the required corporate certificate using the approved certificate/management tool; do not export private keys.",
+      "Ask network support to check RADIUS/802.1X logs for the device and username at the failure time."
+    ],
+    "resolution": {
+      "steps": [
+        "Ensure the device date/time is correct and Wi-Fi is enabled; restart the wireless adapter once.",
+        "Use the official Company Portal or IT instructions to refresh device compliance/certificate enrollment if indicated.",
+        "Only if the service desk procedure instructs it, forget the corporate SSID in Settings > Network & internet > Wi-Fi > Manage known networks and reconnect using the official enrollment/profile method.",
+        "Sign in using the approved 802.1X method; never enter corporate credentials into a similarly named open network.",
+        "Verify access to an internal landing page or approved resource and record any remaining authentication event."
+      ],
+      "estimated_time": "15-40 minutes",
+      "requires_admin": true
+    },
+    "prevention": "Keep devices enrolled and compliant, renew certificates through managed workflows, and use only the published corporate SSID/profile.",
+    "escalation_criteria": "Escalate if certificate enrollment fails, multiple users cannot authenticate, the SSID may be spoofed, or RADIUS/identity logs show repeated authentication failures.",
+    "related_kb_ids": [
+      "KB-0021",
+      "KB-0023"
+    ],
+    "tags": [
+      "network",
+      "wifi",
+      "8021x",
+      "authentication"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0021",
+    "title": "Wi-Fi disconnects intermittently in particular office areas",
+    "category": "Network",
+    "subcategory": "WiFi",
+    "symptoms": [
+      "My laptop loses Wi-Fi when I sit in one meeting room or part of the office.",
+      "The connection drops when I move between floors or access points.",
+      "Wi-Fi works near the router but becomes unreliable at my desk."
+    ],
+    "common_error_codes": [
+      "WLAN AutoConfig disconnected",
+      "Limited connectivity",
+      "High packet loss"
+    ],
+    "root_cause": "Weak coverage, radio interference, access-point congestion, roaming configuration, or a faulty access point can create location-specific Wi-Fi drops.",
+    "diagnostic_steps": [
+      "Record exact building, floor, room/desk, time, SSID, and laptop model for each occurrence.",
+      "On Windows, run `netsh wlan show interfaces` and record signal percentage, channel, and BSSID during a failure.",
+      "Compare with another managed device in the same location and test the same laptop in a known-good area.",
+      "Check Event Viewer > Applications and Services Logs > Microsoft > Windows > WLAN-AutoConfig for disconnect reasons.",
+      "Ask network operations to correlate the timestamp and BSSID with access-point health and client roaming logs."
+    ],
+    "resolution": {
+      "steps": [
+        "Move temporarily to a known-good coverage area or use an approved wired connection for critical work.",
+        "Restart the Wi-Fi adapter once and confirm the approved wireless driver is installed.",
+        "Collect the location, timestamp, signal level, BSSID, and event details; attach them to a Network incident.",
+        "Have network operations inspect access-point load, interference, roaming behavior, and coverage; do not install personal repeaters or rogue access points.",
+        "Retest at the affected location after any centrally managed AP or configuration change."
+      ],
+      "estimated_time": "20-60 minutes for triage; site investigation may take longer",
+      "requires_admin": true
+    },
+    "prevention": "Perform periodic wireless surveys, monitor AP client counts/interference, maintain approved drivers, and report new dead zones with exact locations.",
+    "escalation_criteria": "Escalate if an entire area loses connectivity, voice/emergency systems are affected, multiple managed devices disconnect, or the issue persists after driver verification.",
+    "related_kb_ids": [
+      "KB-0020",
+      "KB-0013"
+    ],
+    "tags": [
+      "network",
+      "wifi",
+      "coverage",
+      "roaming",
+      "interference"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0022",
+    "title": "Firewall blocks legitimate application traffic",
+    "category": "Network",
+    "subcategory": "Firewall",
+    "symptoms": [
+      "An approved application stopped connecting after a network or security change.",
+      "The application works on another network but times out inside the office.",
+      "A specific server, port, or API endpoint appears unreachable."
+    ],
+    "common_error_codes": [
+      "Connection timed out",
+      "Connection refused",
+      "Firewall deny/drop log"
+    ],
+    "root_cause": "A host, network, or endpoint firewall rule may not allow the application's required source, destination, protocol, and port, or the application may have changed its endpoint. A timeout alone does not prove a firewall block.",
+    "diagnostic_steps": [
+      "Identify the application owner, business purpose, source device/subnet, destination FQDN/IP, protocol, port, and failure timestamp.",
+      "Confirm DNS resolution and test the destination with approved tools such as `Test-NetConnection host -Port 443` on Windows.",
+      "Compare connectivity from an approved known-good network or host, if available.",
+      "Ask the firewall team to inspect deny/drop logs and rule hits for the exact five-tuple and timestamp.",
+      "Check recent application, endpoint, firewall, and network changes."
+    ],
+    "resolution": {
+      "steps": [
+        "Open a network/security change request with the application owner and the exact source, destination, protocol, port, business reason, and required duration.",
+        "Have the firewall administrator verify the traffic is legitimate and that the requested destination is owned/approved.",
+        "If approved, implement the narrowest rule scope and shortest justified duration through change control; do not disable the firewall or create an any-to-any rule.",
+        "Test only the required application flow and review firewall logs for expected allow events and unintended traffic.",
+        "Document the rule owner, approval, expiry/review date, and rollback plan."
+      ],
+      "estimated_time": "30-90 minutes; approval and change windows may extend this",
+      "requires_admin": true
+    },
+    "prevention": "Maintain application endpoint inventories, review firewall rules periodically, use least-privilege rules, and notify network security before endpoint changes.",
+    "escalation_criteria": "Escalate to security/network operations for any production outage, suspected malicious traffic, broad rule request, regulated-data flow, or request to disable security controls.",
+    "related_kb_ids": [
+      "KB-0023",
+      "KB-0019"
+    ],
+    "tags": [
+      "network",
+      "firewall",
+      "security",
+      "connectivity",
+      "change-control"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0023",
+    "title": "DNS lookup fails for internal or external resources",
+    "category": "Network",
+    "subcategory": "DNS",
+    "symptoms": [
+      "I can connect to the network but cannot open an internal site by its name.",
+      "The same server works by IP address but not by hostname.",
+      "Some applications report that the server cannot be found."
+    ],
+    "common_error_codes": [
+      "DNS_PROBE_FINISHED_NXDOMAIN",
+      "DNS server not responding",
+      "SERVFAIL",
+      "Name or service not known"
+    ],
+    "root_cause": "The client may be using an incorrect DNS server or suffix, have stale resolver cache, or be querying a record that is missing or misconfigured. Network reachability and DNS service health must be checked separately.",
+    "diagnostic_steps": [
+      "Record the exact FQDN, error, network location, and whether VPN is connected.",
+      "Run `nslookup hostname` and `ipconfig /all` on Windows to identify the resolver and response.",
+      "Test the approved DNS server with `nslookup hostname <dns-server-ip>` where permitted.",
+      "Compare name resolution with direct IP connectivity and check whether peers have the same issue.",
+      "Ask DNS/network operations to inspect the record, zone, resolver logs, and recent changes."
+    ],
+    "resolution": {
+      "steps": [
+        "Confirm the device is on the correct corporate network or VPN for the requested internal hostname.",
+        "On Windows, run `ipconfig /flushdns` and retry the lookup.",
+        "If the DNS server shown by `ipconfig /all` is not the organization's approved resolver, reconnect to the managed network or contact support; do not substitute a public DNS service on a corporate device.",
+        "Provide the `nslookup` output and timestamp to DNS operations so the record or resolver can be corrected centrally.",
+        "Retry the original application by hostname after the resolver/record change and verify the expected address."
+      ],
+      "estimated_time": "10-35 minutes",
+      "requires_admin": false
+    },
+    "prevention": "Use managed DNS settings, maintain accurate DNS records and TTLs, monitor resolver availability, and validate records when services move.",
+    "escalation_criteria": "Escalate if many users or critical services cannot resolve names, records point to an unexpected host, or the failure affects identity/authentication or security-sensitive services.",
+    "related_kb_ids": [
+      "KB-0018",
+      "KB-0024"
+    ],
+    "tags": [
+      "network",
+      "dns",
+      "name-resolution",
+      "connectivity"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0024",
+    "title": "Network drive does not map automatically at sign-in",
+    "category": "Network",
+    "subcategory": "Network drive",
+    "symptoms": [
+      "My shared drive is missing after I sign in.",
+      "I can open the file server in the office but the mapped drive letter is not shown.",
+      "The drive mapping works only after I disconnect and reconnect to VPN."
+    ],
+    "common_error_codes": [
+      "System error 67",
+      "The network name cannot be found",
+      "The specified network path was not found"
+    ],
+    "root_cause": "The mapping script or Group Policy may not have run, the user may be off-network/VPN, the UNC path may have changed, or cached credentials may be stale.",
+    "diagnostic_steps": [
+      "Confirm the expected drive letter and approved UNC path from the service catalog or a working peer; do not guess the server path.",
+      "Check whether the device is connected to the corporate network or VPN before sign-in scripts run.",
+      "Run `net use` in Command Prompt to list current mappings and their status.",
+      "Test the approved UNC path in File Explorer and note the exact error.",
+      "Run `gpresult /r` if directed by support to confirm applicable user policies and mapping policies."
+    ],
+    "resolution": {
+      "steps": [
+        "Connect to the corporate network or approved VPN and wait for device/user policy processing to complete.",
+        "Open the approved UNC path (for example, `\\\\fileserver\\share`) in File Explorer to confirm it is reachable.",
+        "If the mapping is documented and self-service is allowed, use File Explorer > This PC > Map network drive, enter the approved UNC path, and select Reconnect at sign-in.",
+        "Alternatively, where approved, run `net use Z: \\\\fileserver\\share /persistent:yes` using the actual drive letter and path supplied by IT; do not include passwords in the command.",
+        "Sign out and back in or restart once, then verify the expected drive letter and file access."
+      ],
+      "estimated_time": "10-30 minutes",
+      "requires_admin": false
+    },
+    "prevention": "Maintain current UNC paths and mapping policies, ensure VPN/network connectivity at sign-in, and remove obsolete mappings through the approved process.",
+    "escalation_criteria": "Escalate if the UNC path is unavailable to multiple users, Group Policy fails, the mapping points to an unexpected location, or business-critical files cannot be reached.",
+    "related_kb_ids": [
+      "KB-0025",
+      "KB-0023"
+    ],
+    "tags": [
+      "network",
+      "network-drive",
+      "mapping",
+      "group-policy"
+    ],
+    "priority_hint": "P3",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0025",
+    "title": "Access denied when opening a network share or folder",
+    "category": "Network",
+    "subcategory": "Network drive",
+    "symptoms": [
+      "I can see the shared folder but cannot open it.",
+      "I get Access Denied when saving files to a team drive.",
+      "My colleague can access the folder but my account cannot."
+    ],
+    "common_error_codes": [
+      "Access is denied",
+      "Windows error 5",
+      "You do not have permission to access"
+    ],
+    "root_cause": "The user may not be a member of the approved access group, or share and NTFS permissions may not align. A stale sign-in token or access to the wrong account can also cause the symptom.",
+    "diagnostic_steps": [
+      "Confirm the exact UNC path, folder, action attempted (read/write), username, device, and timestamp.",
+      "Ask the user to verify they signed in with the correct corporate account and reconnect to the approved network/VPN.",
+      "Check whether the issue affects one folder, one user, or an entire team.",
+      "Have the file-share owner or administrator review effective NTFS and share permissions and the approved access group.",
+      "Check recent group-membership changes and whether a fresh sign-in token is required."
+    ],
+    "resolution": {
+      "steps": [
+        "Confirm the user's business need and obtain approval from the data/share owner through the standard access-request workflow.",
+        "Have an authorized file-share administrator add the user to the minimum approved security group; do not grant Full Control or alter inherited ACLs as a shortcut.",
+        "Ask the user to sign out and back in, or refresh the network session as directed by IT, so updated group membership is applied.",
+        "Retest the precise read/write action and verify access is limited to the approved folder.",
+        "Record the approver, group change, scope, and completion time in the access ticket."
+      ],
+      "estimated_time": "20-45 minutes after approval",
+      "requires_admin": true
+    },
+    "prevention": "Use role-based groups, appoint share owners, review permissions periodically, and avoid direct user-level ACL entries where group management is available.",
+    "escalation_criteria": "Escalate if confidential data may have been exposed, permission inheritance is broken, access is needed urgently for a critical process, or the requested permission exceeds the user's role.",
+    "related_kb_ids": [
+      "KB-0003",
+      "KB-0024"
+    ],
+    "tags": [
+      "network",
+      "network-drive",
+      "permissions",
+      "access-denied"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0026",
+    "title": "Software installation fails because the user lacks permissions",
+    "category": "Software",
+    "subcategory": "Installation issue",
+    "symptoms": [
+      "The installer says I need administrator rights.",
+      "The install button is unavailable or installation rolls back immediately.",
+      "I can download the setup file but cannot complete the installation."
+    ],
+    "common_error_codes": [
+      "Access denied",
+      "Error 5",
+      "1603",
+      "Installation requires elevated privileges"
+    ],
+    "root_cause": "The installer is attempting a machine-wide change, writing to a protected location, installing a service/driver, or changing system settings that standard users cannot modify. This is expected on managed endpoints.",
+    "diagnostic_steps": [
+      "Record the application name, publisher, version, installer source, OS version, and exact error code.",
+      "Check whether the app already exists in Settings > Apps > Installed apps or the company software portal.",
+      "Determine whether the package is approved and whether it is intended for per-user or device-wide installation.",
+      "Review endpoint deployment logs or Windows Installer events if support has access."
+    ],
+    "resolution": {
+      "steps": [
+        "Do not disable User Account Control or attempt to obtain/borrow an administrator password.",
+        "Search the company portal/software center for the approved package and install it using the managed deployment option.",
+        "If the package is not listed, submit the Software Request workflow with business justification and required approvals (see KB-0014).",
+        "Have endpoint support deploy the approved package with managed administrative rights or provide an approved per-user installation method.",
+        "Launch the application and verify the expected version and license after deployment."
+      ],
+      "estimated_time": "15-45 minutes; approval or packaging may take longer",
+      "requires_admin": true
+    },
+    "prevention": "Publish standard packages in the company portal, use least-privilege deployment tools, and communicate supported versions and request paths.",
+    "escalation_criteria": "Escalate if a business-critical application is unavailable, the installer requests unexpected privileges/drivers, the package is unapproved, or users are being asked to bypass endpoint controls.",
+    "related_kb_ids": [
+      "KB-0014",
+      "KB-0028"
+    ],
+    "tags": [
+      "software",
+      "installation",
+      "permissions",
+      "admin-rights"
+    ],
+    "priority_hint": "P3",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0027",
+    "title": "MSI or EXE installation fails because another version is present",
+    "category": "Software",
+    "subcategory": "Installation issue",
+    "symptoms": [
+      "The installer says a newer or older version is already installed.",
+      "Setup stops with an error about another installation running.",
+      "The application appears in Installed apps but will not update or reinstall."
+    ],
+    "common_error_codes": [
+      "MSI error 1618",
+      "MSI error 1638",
+      "MSI error 1605",
+      "Another installation is already in progress"
+    ],
+    "root_cause": "A Windows Installer transaction may still be running, a conflicting product version or architecture may be installed, or a previous uninstall/update may have left inconsistent installer state.",
+    "diagnostic_steps": [
+      "Record the product name, version, architecture (32/64-bit), package type (MSI/EXE), and exact error code.",
+      "Check Settings > Apps > Installed apps for duplicate, older, or newer product entries.",
+      "Check Task Manager for an active installer/update process and Windows Event Viewer > Windows Logs > Application for MsiInstaller events.",
+      "Confirm the package is from the official company portal/vendor and matches the device's OS architecture."
+    ],
+    "resolution": {
+      "steps": [
+        "If another installation is actively running, allow it to finish; do not terminate Windows Installer processes unless endpoint support directs it.",
+        "Restart the device once if no installer is active but a previous transaction appears stuck, then retry the approved package.",
+        "Use Settings > Apps > Installed apps to uninstall the conflicting version only when the organization's software instructions permit it.",
+        "If removal fails, collect the MsiInstaller event details and installation log; have endpoint support use the vendor's supported cleanup or repair procedure.",
+        "Retry the correct approved version and verify it appears once in Installed apps and launches successfully."
+      ],
+      "estimated_time": "20-60 minutes",
+      "requires_admin": true
+    },
+    "prevention": "Deploy upgrades through one managed channel, avoid concurrent software installations, and test upgrade/uninstall paths before broad release.",
+    "escalation_criteria": "Escalate if Windows Installer remains busy after one restart, uninstall is incomplete, the app is business-critical, or a proposed fix involves deleting installer registry keys or product data manually.",
+    "related_kb_ids": [
+      "KB-0026",
+      "KB-0010"
+    ],
+    "tags": [
+      "software",
+      "msi",
+      "installer",
+      "version-conflict"
+    ],
+    "priority_hint": "P3",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0028",
+    "title": "Endpoint protection blocks an otherwise required software installer",
+    "category": "Software",
+    "subcategory": "Installation issue",
+    "symptoms": [
+      "The installer is quarantined or removed before setup completes.",
+      "Windows or the company security agent says the application was blocked by your organization.",
+      "The setup file opens on another machine but is blocked on my managed laptop."
+    ],
+    "common_error_codes": [
+      "0x800704EC",
+      "App blocked by administrator",
+      "Threat quarantined",
+      "Potentially unwanted application blocked"
+    ],
+    "root_cause": "Endpoint protection, application control, reputation checks, or policy-based allowlisting may block an installer because it is untrusted, unsigned, vulnerable, or not approved. The block may be intentional and must not be bypassed.",
+    "diagnostic_steps": [
+      "Record the application/publisher, version, official download source, file hash if available, timestamp, and exact security notification.",
+      "Check the organization's endpoint-security portal or user notification for the detection name and action taken.",
+      "Verify the package signature and publisher using approved tools; do not upload company files to public scanning services.",
+      "Check whether the application is already approved or has an existing software request/security review."
+    ],
+    "resolution": {
+      "steps": [
+        "Do not turn off antivirus, endpoint detection, SmartScreen, application control, or firewall protections.",
+        "Submit the installer and business justification through the security/software review process, including publisher, version, source, and hash if requested.",
+        "Security staff should analyze the detection and determine whether the block is malicious, unwanted, or a false positive.",
+        "If approved, security/endpoint administrators should publish a scoped allow rule or managed package with an owner and review/expiry date.",
+        "Install only the centrally approved version and confirm endpoint protection remains enabled and reports healthy."
+      ],
+      "estimated_time": "30-90 minutes for triage; security review may take longer",
+      "requires_admin": true
+    },
+    "prevention": "Use signed installers from trusted sources, maintain an approved software catalog, and submit new software for review before deployment deadlines.",
+    "escalation_criteria": "Escalate immediately for malware/ransomware alerts, unsigned or tampered installers, repeated detections, requests to disable protection, or suspected compromise.",
+    "related_kb_ids": [
+      "KB-0014",
+      "KB-0026"
+    ],
+    "tags": [
+      "software",
+      "endpoint-protection",
+      "antivirus",
+      "application-control",
+      "security"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0029",
+    "title": "Application crashes on startup because a runtime or dependency is missing",
+    "category": "Software",
+    "subcategory": "Application error",
+    "symptoms": [
+      "The application opens and closes immediately.",
+      "A message says a DLL or runtime component cannot be found.",
+      "The application worked before an update but now crashes when I launch it."
+    ],
+    "common_error_codes": [
+      "VCRUNTIME140.dll was not found",
+      ".NET Runtime error",
+      "Faulting application name",
+      "Application Error event 1000"
+    ],
+    "root_cause": "The application may depend on a missing or damaged Microsoft Visual C++ runtime, .NET runtime, application DLL, or incompatible version left by an update. Downloading individual DLLs from unofficial sites is unsafe.",
+    "diagnostic_steps": [
+      "Record the application name/version, exact error text, faulting module if shown, and time of the crash.",
+      "Open Event Viewer > Windows Logs > Application and inspect the matching Application Error and .NET Runtime events.",
+      "Check Settings > Apps > Installed apps for the required runtime version using the vendor's system requirements.",
+      "Ask whether the crash began after an application, OS, driver, or runtime update and whether other users are affected."
+    ],
+    "resolution": {
+      "steps": [
+        "Restart the application and device once, then confirm the issue is reproducible.",
+        "Use the company portal or vendor's official support instructions to repair the application installation.",
+        "If the vendor identifies a required Visual C++ or .NET runtime, install or repair the supported package only from the company portal or official Microsoft distribution channel.",
+        "Do not download standalone DLL files from third-party websites or copy DLLs from another workstation.",
+        "Launch the application again and verify the crash no longer appears in Event Viewer; attach new event details if it persists."
+      ],
+      "estimated_time": "20-60 minutes",
+      "requires_admin": true
+    },
+    "prevention": "Package application dependencies with approved deployments, test updates on supported OS builds, and maintain a documented compatibility matrix.",
+    "escalation_criteria": "Escalate if a core business application remains unusable, multiple users crash after a rollout, the faulting module suggests security software/driver involvement, or the proposed fix requires system-wide runtime changes.",
+    "related_kb_ids": [
+      "KB-0027",
+      "KB-0030"
+    ],
+    "tags": [
+      "software",
+      "application-error",
+      "dll",
+      "runtime",
+      "crash"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  },
+  {
+    "kb_id": "KB-0030",
+    "title": "Application freezes or uses unusually high CPU",
+    "category": "Software",
+    "subcategory": "Application error",
+    "symptoms": [
+      "The application becomes unresponsive for long periods.",
+      "My laptop fan runs constantly and the application uses most of the CPU.",
+      "The app freezes when I open a particular file or perform a specific action."
+    ],
+    "common_error_codes": [
+      "Not Responding",
+      "Application Hang event 1002",
+      "High CPU utilization",
+      "Out of memory"
+    ],
+    "root_cause": "A large or corrupted workload, application defect, plug-in, background task, resource leak, or interaction with another process may cause high CPU use or a hang. The process and workload must be identified before changing settings.",
+    "diagnostic_steps": [
+      "Open Task Manager (`Ctrl+Shift+Esc`) and sort Processes by CPU and Memory; record the affected process and approximate utilization.",
+      "Check whether the slowdown occurs with one file/action or immediately after application launch.",
+      "Use Resource Monitor (`resmon`) to inspect CPU, memory, disk, and handle activity if needed.",
+      "Review Event Viewer > Windows Logs > Application for Application Hang (1002) or related crash events.",
+      "Compare with a known-good workstation and check for a recent application, plug-in, or OS update."
+    ],
+    "resolution": {
+      "steps": [
+        "Save work if the application responds; close unnecessary high-resource applications and allow any legitimate long-running task to finish.",
+        "If the application remains unresponsive and work is saved, end only the affected application process through Task Manager and relaunch once.",
+        "Test with a small known-good file or without optional plug-ins, using only vendor-supported troubleshooting steps.",
+        "Install approved application updates and verify that the device meets the application's documented memory/CPU requirements.",
+        "If reproducible, collect timestamps, sample workload details, CPU/memory observations, and approved diagnostic logs for the application owner/vendor.",
+        "Verify normal resource use during the same task after the corrective action."
+      ],
+      "estimated_time": "20-60 minutes",
+      "requires_admin": false
+    },
+    "prevention": "Keep applications and plug-ins supported, test large workloads, monitor resource use, and remove unused extensions through approved procedures.",
+    "escalation_criteria": "Escalate if freezes affect multiple users, unsaved or business-critical data may be lost, CPU saturation persists after one controlled restart, or diagnostic logs indicate a recurring application defect.",
+    "related_kb_ids": [
+      "KB-0002",
+      "KB-0029"
+    ],
+    "tags": [
+      "software",
+      "application-error",
+      "high-cpu",
+      "freeze",
+      "performance"
+    ],
+    "priority_hint": "P2",
+    "last_updated": "2026-10-31"
+  }
+]

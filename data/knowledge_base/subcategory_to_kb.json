@@ -1,0 +1,40 @@
+{
+  "source_file": "Dataset_ticket.xlsx",
+  "source_columns": {
+    "category": "Category",
+    "subcategory": "Subcategory",
+    "ticket_text": "Text"
+  },
+  "ticket_language": "Italian",
+  "key_format": "{category}::{subcategory}",
+  "coverage_legend": {
+    "exact": "The dataset subcategory closely matches the scope of the listed KB articles.",
+    "broad": "The dataset subcategory identifies a platform/domain; ticket text must select among several issue-specific KB articles.",
+    "partial": "The KB articles cover only some ticket patterns in this subcategory. Always retain full-vector fallback.",
+    "unsupported": "No sufficiently relevant KB article currently exists. Use full-vector fallback and consider authoring a dedicated article."
+  },
+  "mappings": [
+    {"category": "Database", "subcategory": "DB2", "kb_ids": ["KB-0001", "KB-0002", "KB-0003", "KB-0004", "KB-0005"], "coverage": "broad", "notes": "DB2 is a database platform label. The text distinguishes performance, connection-pool, access/authentication, and backup/restore issues."},
+    {"category": "Database", "subcategory": "MS SQL Server", "kb_ids": ["KB-0001", "KB-0002", "KB-0003", "KB-0004", "KB-0005"], "coverage": "broad", "notes": "SQL Server is a database platform label. Use ticket text to select the specific database failure mode."},
+    {"category": "Database", "subcategory": "Oracle", "kb_ids": ["KB-0001", "KB-0002", "KB-0003", "KB-0004", "KB-0005"], "coverage": "broad", "notes": "Oracle is a database platform label. Use ticket text to select the specific database failure mode."},
+
+    {"category": "Hardware", "subcategory": "CPU", "kb_ids": [], "coverage": "unsupported", "notes": "No KB article specifically covers CPU overheating, fan noise, or hardware CPU saturation. KB-0030 is application CPU usage and should not be treated as equivalent."},
+    {"category": "Hardware", "subcategory": "Disk", "kb_ids": [], "coverage": "unsupported", "notes": "No KB article specifically covers disk health, drive detection, or data recovery. Do not substitute database backup guidance for physical disk recovery."},
+    {"category": "Hardware", "subcategory": "Keyboard", "kb_ids": ["KB-0012"], "coverage": "partial", "notes": "KB-0012 covers Bluetooth keyboard/mouse pairing and disconnects, but not stuck, worn, or unresponsive wired keyboard keys."},
+    {"category": "Hardware", "subcategory": "Memory", "kb_ids": ["KB-0006"], "coverage": "partial", "notes": "KB-0006 includes boot failures/BSOD but is not a dedicated RAM diagnostic or memory-upgrade article."},
+    {"category": "Hardware", "subcategory": "Monitor", "kb_ids": ["KB-0008"], "coverage": "exact", "notes": "KB-0008 directly covers external monitor detection and display problems."},
+    {"category": "Hardware", "subcategory": "Mouse", "kb_ids": ["KB-0012"], "coverage": "partial", "notes": "KB-0012 covers Bluetooth mouse pairing/disconnects, but not all wired mouse, sensor, or button failures."},
+
+    {"category": "Inquiry/Help", "subcategory": "Antivirus", "kb_ids": ["KB-0014", "KB-0026", "KB-0028"], "coverage": "partial", "notes": "These cover software requests, installation permissions, and endpoint-protection blocks; they do not cover threat triage, signature updates, scheduled scans, or false positives comprehensively."},
+    {"category": "Inquiry/Help", "subcategory": "Internal Application", "kb_ids": ["KB-0014", "KB-0025"], "coverage": "partial", "notes": "KB-0025 may help with shared-folder permissions and KB-0014 with software requests, but application-specific authorization workflows are not covered."},
+
+    {"category": "Network", "subcategory": "DHCP", "kb_ids": [], "coverage": "unsupported", "notes": "No KB article specifically covers DHCP leases, address assignment, or DHCP server faults."},
+    {"category": "Network", "subcategory": "DNS", "kb_ids": ["KB-0023"], "coverage": "exact", "notes": "KB-0023 directly covers DNS resolution failures."},
+    {"category": "Network", "subcategory": "IP Address", "kb_ids": [], "coverage": "unsupported", "notes": "No dedicated article covers static IP configuration, address conflicts, or IP blocking. Use full-vector fallback; consider adding IP addressing guidance."},
+    {"category": "Network", "subcategory": "VPN", "kb_ids": ["KB-0018", "KB-0019"], "coverage": "exact", "notes": "KB-0018 covers VPN connection failures/disconnections; KB-0019 covers VPN performance/routing."},
+    {"category": "Network", "subcategory": "Wireless", "kb_ids": ["KB-0020", "KB-0021"], "coverage": "exact", "notes": "KB-0020 covers corporate Wi-Fi authentication; KB-0021 covers intermittent Wi-Fi disconnections and area-specific signal issues."},
+
+    {"category": "Software", "subcategory": "Email", "kb_ids": ["KB-0015"], "coverage": "partial", "notes": "KB-0015 covers corporate email on mobile devices, especially setup/synchronization; it does not cover all mailbox/server send-receive failures."},
+    {"category": "Software", "subcategory": "Operating System", "kb_ids": ["KB-0006", "KB-0029", "KB-0030"], "coverage": "partial", "notes": "These cover boot/BSOD and application startup/freezing symptoms, but not general OS update, patching, or configuration failures."}
+  ]
+}
