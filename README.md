@@ -221,7 +221,7 @@ python3 presentation/generate_slides.py
 * **Nirdesh Bhandari** ([@nirdesho6o](https://github.com/nirdesho6o)) — System Architecture
 * **Harshitha Panchaneni** ([@HarshithaPanchaneni](https://github.com/HarshithaPanchaneni)) — Project Lead & Repository Owner
 * **Phani Uday** - RAG Implementation and Feedback Loop
-* **Vikas Goud** ([@vikasgoud1711](https://github.com/vikasgoud1711)) — Machine Learning & Classification
+* **Monika Varathur** — Machine Learning & Classification
 * **HCL Tech Hackathon Team** — ITSM GenAI Innovation
 
 ---
