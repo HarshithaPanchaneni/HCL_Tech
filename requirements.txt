@@ -1,0 +1,11 @@
+sentence-transformers
+chromadb
+datasets
+numpy
+openai
+openpyxl
+scikit-learn
+matplotlib
+seaborn
+streamlit
+argostranslate

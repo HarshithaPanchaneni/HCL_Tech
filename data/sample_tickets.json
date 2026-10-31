@@ -1,0 +1,86 @@
+[
+  {
+    "id": "DEMO-001",
+    "title": "Can't connect to corporate VPN from home office",
+    "description": "Since this morning I have been unable to connect to the corporate VPN from my home network. The client shows 'Gateway not responding' after about 30 seconds. My internet connection is fine — I can browse the web and other sites load normally. I tried restarting the VPN client and my laptop but the problem persists. I need access to internal systems for a deadline today.",
+    "category": null,
+    "subcategory": null,
+    "priority": null,
+    "status": "new",
+    "resolution": null,
+    "metadata": {"source": "demo", "expected_category": "Network", "expected_subcategory": "VPN"}
+  },
+  {
+    "id": "DEMO-002",
+    "title": "Oracle database queries running very slow, reports taking 10+ minutes",
+    "description": "The monthly sales report in our Oracle-based reporting tool has been taking over 10 minutes to load for the past two days. It used to complete in under 30 seconds. The report queries the main orders table which has grown to 5 million rows. Other reports on smaller tables still work fine. DBA checked and there are no locks. ORA-01013 timeout errors are appearing in the application logs. This is blocking the finance team from completing month-end close. Approximately 15 users are affected.",
+    "category": null,
+    "subcategory": null,
+    "priority": null,
+    "status": "new",
+    "resolution": null,
+    "metadata": {"source": "demo", "expected_category": "Database", "expected_subcategory": "Oracle"}
+  },
+  {
+    "id": "DEMO-003",
+    "title": "External monitor goes black intermittently after Windows update",
+    "description": "After the latest Windows update, my external Dell 27-inch monitor connected via DisplayPort keeps going black for 2-3 seconds every few minutes. The laptop screen stays on. I've tried a different cable and port but the issue persists. The monitor works fine with my colleague's laptop. Device Manager shows no warning icons under Display adapters.",
+    "category": null,
+    "subcategory": null,
+    "priority": null,
+    "status": "new",
+    "resolution": null,
+    "metadata": {"source": "demo", "expected_category": "Hardware", "expected_subcategory": "Monitor"}
+  },
+  {
+    "id": "DEMO-004",
+    "title": "Outlook keeps crashing when opening attachments",
+    "description": "Microsoft Outlook crashes immediately whenever I try to open or preview email attachments. Regular emails without attachments work fine. I see 'Faulting application name: OUTLOOK.EXE' with exception code 0xc0000005 in Event Viewer. The problem started after the last Office update. I have critical client proposals to review by end of day. Other Office apps like Word and Excel work normally.",
+    "category": null,
+    "subcategory": null,
+    "priority": null,
+    "status": "new",
+    "resolution": null,
+    "metadata": {"source": "demo", "expected_category": "Software", "expected_subcategory": "Email"}
+  },
+  {
+    "id": "DEMO-005",
+    "title": "VPN keeps dropping and laptop overheating at the same time",
+    "description": "Two issues happening simultaneously: (1) My VPN connection drops every 10-15 minutes — I get disconnected and have to reconnect manually, losing unsaved work on remote desktop. (2) My laptop fan is running at full speed constantly and the bottom is very hot to touch. CPU usage shows 85-90% even with just the VPN client and browser open. Both issues started about 3 days ago. The laptop is only 6 months old.",
+    "category": null,
+    "subcategory": null,
+    "priority": null,
+    "status": "new",
+    "resolution": null,
+    "metadata": {
+      "source": "demo",
+      "expected_category": "Network",
+      "expected_subcategory": "VPN",
+      "expected_secondary_category": "Hardware",
+      "expected_secondary_subcategory": "CPU",
+      "multi_category": true
+    }
+  },
+  {
+    "id": "DEMO-006",
+    "title": "WiFi disconnects in conference rooms on 2nd floor",
+    "description": "My laptop keeps losing WiFi connection in the conference rooms on the 2nd floor of Building B. The connection drops every 5-10 minutes during meetings. Signal shows 2-3 bars but then suddenly disconnects. It works fine at my desk on the 1st floor. Multiple colleagues have reported the same issue. We have important client presentations next week and need reliable connectivity.",
+    "category": null,
+    "subcategory": null,
+    "priority": null,
+    "status": "new",
+    "resolution": null,
+    "metadata": {"source": "demo", "expected_category": "Network", "expected_subcategory": "Wireless"}
+  },
+  {
+    "id": "DEMO-007",
+    "title": "MS SQL Server login fails for new team member",
+    "description": "Our new team member started today and cannot access the customer database on MS SQL Server. The error is 'SQL Server error 18456 - Login failed for user'. Their Windows account works fine for email and file shares. The access request was submitted last week through the portal and approved by the manager. Other team members with the same role can access the database without issues.",
+    "category": null,
+    "subcategory": null,
+    "priority": null,
+    "status": "new",
+    "resolution": null,
+    "metadata": {"source": "demo", "expected_category": "Database", "expected_subcategory": "MS SQL Server"}
+  }
+]
