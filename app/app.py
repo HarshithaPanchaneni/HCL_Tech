@@ -99,7 +99,20 @@ with st.sidebar:
         api_key = st.text_input("Groq API Key", value=default_groq_key, type="password", key="groq_key",
                                 placeholder="gsk_...",
                                 help="Free key from https://console.groq.com")
-        groq_model = st.selectbox("Groq Model", ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"], key="groq_model")
+        
+        # Discover accessible models on this Groq account
+        groq_models = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile"]
+        if api_key:
+            try:
+                from openai import OpenAI
+                _temp = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=api_key)
+                _remote_models = [m.id for m in _temp.models.list().data if "whisper" not in m.id and "guard" not in m.id]
+                if _remote_models:
+                    groq_models = sorted(_remote_models, key=lambda x: (0 if "8b" in x else (1 if "70b" in x else 2)))
+            except Exception:
+                pass
+
+        groq_model = st.selectbox("Groq Model", groq_models, key="groq_model")
         if api_key:
             import src.config as _cfg
             _cfg.LLM_API_KEY = api_key
