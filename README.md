@@ -96,14 +96,6 @@ All metrics were evaluated using deterministic scripts against the full dataset 
 ### 1. Retrieval Quality (Corpus: 1,800 Tickets)
 Tested across $N=50$ stratified tickets (excluding query identity from top-k):
 
-| Metric | Score | Industry Benchmark | Status |
-|---|---|---|---|
-| **Category Precision@1** | **100.00%** | > 85.0% | ✅ Exceeded |
-| **Category Precision@3** | **100.00%** | > 80.0% | ✅ Exceeded |
-| **Category Precision@5** | **99.20%** | > 75.0% | ✅ Exceeded |
-| **Mean Reciprocal Rank (MRR)** | **1.0000** | > 0.850 | ✅ Perfect Hit |
-| **Subcategory Precision@1** | **100.00%** | > 75.0% | ✅ Exceeded |
-| **Subcategory Precision@5** | **92.40%** | > 70.0% | ✅ Exceeded |
 
 ### 2. Knowledge Base Retrieval (30 Runbooks)
 * **Top-1 Mapped Accuracy:** **100.00%** (Direct match on primary runbook)
@@ -114,7 +106,7 @@ Tested across $N=50$ stratified tickets (excluding query identity from top-k):
 
 ```
 HCL Production Target SLA:  |████████████████████████████████████████| < 10.0s
-Our System Pipeline Time:   |████████| ~2.1s (4.7x faster)
+Our System Pipeline Time:   |████████| ~2.1s (4.7x faster) (ON GROQ)
 ```
 
 * **Classification:** ~800 ms (LLM) / ~5 ms (Fallback)
@@ -226,8 +218,9 @@ python3 presentation/generate_slides.py
 
 ## 👥 Contributors
 
-* **Nirdesh Bhandari** ([@nirdesho6o](https://github.com/nirdesho6o)) — System Architecture, Dual Retrieval & Evaluation
+* **Nirdesh Bhandari** ([@nirdesho6o](https://github.com/nirdesho6o)) — System Architecture
 * **Harshitha Panchaneni** ([@HarshithaPanchaneni](https://github.com/HarshithaPanchaneni)) — Project Lead & Repository Owner
+* **Phani Uday** - RAG Implementation and Feedback Loop
 * **Vikas Goud** ([@vikasgoud1711](https://github.com/vikasgoud1711)) — Machine Learning & Classification
 * **HCL Tech Hackathon Team** — ITSM GenAI Innovation
 
