@@ -126,7 +126,7 @@ Our System Pipeline Time:   |████████| ~2.1s (4.7x faster) (ON G
 | **Vector Store** | ChromaDB (Persistent) | Local, zero-latency vector embedding storage |
 | **Embeddings** | `paraphrase-multilingual-MiniLM-L12-v2` | Handles Italian corpus & English queries seamlessly |
 | **LLM Inference** | Groq (`llama-3.1-8b-instant`) | Ultra-fast sub-second token generation |
-| **Local LLM** | Ollama (`qwen2.5:7b`) | Offline, air-gapped backup capability |
+| **Local LLM** | Ollama (`phi3.5-latest`) | Offline, air-gapped backup capability |
 | **Evaluation** | Scikit-learn, NumPy | Empirical precision, recall, and MRR metrics |
 
 ---
