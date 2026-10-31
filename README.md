@@ -21,7 +21,6 @@ Our system solves this via **Two-Source Retrieval-Augmented Generation (RAG)**:
 1. **Source 1 (Ticket Corpus - 1,800 tickets):** Used exclusively for similarity matching, domain clustering, and classification validation.
 2. **Source 2 (Curated Knowledge Base - 30 runbooks):** Used as the single source of truth for step-by-step diagnostic and remediation procedures.
 
-> 💡 **Core Design Philosophy:** *"Our system doesn't hallucinate resolutions. When it doesn't know, it cites specific evidence or escalates to L2/L3 with full diagnostic logs."*
 
 ---
 
