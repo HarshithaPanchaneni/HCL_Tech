@@ -1,0 +1,612 @@
+{
+  "ticket_retrieval": {
+    "mean_precision@1": 1.0,
+    "mean_precision@3": 1.0,
+    "mean_precision@5": 1.0,
+    "mean_mrr": 1.0,
+    "num_queries": 7,
+    "per_query": [
+      {
+        "ticket_id": "DEMO-001",
+        "expected_category": "Network",
+        "top_5": [
+          {
+            "id": "TKT-1311",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.7703,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1361",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.738,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1062",
+            "category": "Network",
+            "subcategory": "DHCP",
+            "score": 0.7158,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1326",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.7062,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1313",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.6945,
+            "relevant": true
+          }
+        ],
+        "precision@1": 1.0,
+        "precision@3": 1.0,
+        "precision@5": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "ticket_id": "DEMO-002",
+        "expected_category": "Database",
+        "top_5": [
+          {
+            "id": "TKT-1751",
+            "category": "Database",
+            "subcategory": "Oracle",
+            "score": 0.7947,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1701",
+            "category": "Database",
+            "subcategory": "Oracle",
+            "score": 0.7868,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1789",
+            "category": "Database",
+            "subcategory": "Oracle",
+            "score": 0.7817,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1744",
+            "category": "Database",
+            "subcategory": "Oracle",
+            "score": 0.775,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1706",
+            "category": "Database",
+            "subcategory": "Oracle",
+            "score": 0.755,
+            "relevant": true
+          }
+        ],
+        "precision@1": 1.0,
+        "precision@3": 1.0,
+        "precision@5": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "ticket_id": "DEMO-003",
+        "expected_category": "Hardware",
+        "top_5": [
+          {
+            "id": "TKT-0864",
+            "category": "Hardware",
+            "subcategory": "Monitor",
+            "score": 0.7185,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0814",
+            "category": "Hardware",
+            "subcategory": "Monitor",
+            "score": 0.7007,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0834",
+            "category": "Hardware",
+            "subcategory": "Monitor",
+            "score": 0.6603,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0828",
+            "category": "Hardware",
+            "subcategory": "Monitor",
+            "score": 0.652,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0884",
+            "category": "Hardware",
+            "subcategory": "Monitor",
+            "score": 0.6474,
+            "relevant": true
+          }
+        ],
+        "precision@1": 1.0,
+        "precision@3": 1.0,
+        "precision@5": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "ticket_id": "DEMO-004",
+        "expected_category": "Software",
+        "top_5": [
+          {
+            "id": "TKT-0290",
+            "category": "Software",
+            "subcategory": "Email",
+            "score": 0.6627,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0240",
+            "category": "Software",
+            "subcategory": "Email",
+            "score": 0.5967,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0236",
+            "category": "Software",
+            "subcategory": "Email",
+            "score": 0.5755,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0205",
+            "category": "Software",
+            "subcategory": "Email",
+            "score": 0.5751,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0226",
+            "category": "Software",
+            "subcategory": "Email",
+            "score": 0.5743,
+            "relevant": true
+          }
+        ],
+        "precision@1": 1.0,
+        "precision@3": 1.0,
+        "precision@5": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "ticket_id": "DEMO-005",
+        "expected_category": "Network",
+        "top_5": [
+          {
+            "id": "TKT-1341",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.6776,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1314",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.6538,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1303",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.652,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1380",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.6495,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1353",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.6486,
+            "relevant": true
+          }
+        ],
+        "precision@1": 1.0,
+        "precision@3": 1.0,
+        "precision@5": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "ticket_id": "DEMO-006",
+        "expected_category": "Network",
+        "top_5": [
+          {
+            "id": "TKT-1432",
+            "category": "Network",
+            "subcategory": "Wireless",
+            "score": 0.6551,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1467",
+            "category": "Network",
+            "subcategory": "Wireless",
+            "score": 0.6381,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1457",
+            "category": "Network",
+            "subcategory": "Wireless",
+            "score": 0.6287,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1407",
+            "category": "Network",
+            "subcategory": "Wireless",
+            "score": 0.6254,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1417",
+            "category": "Network",
+            "subcategory": "Wireless",
+            "score": 0.6206,
+            "relevant": true
+          }
+        ],
+        "precision@1": 1.0,
+        "precision@3": 1.0,
+        "precision@5": 1.0,
+        "mrr": 1.0
+      },
+      {
+        "ticket_id": "DEMO-007",
+        "expected_category": "Database",
+        "top_5": [
+          {
+            "id": "TKT-1603",
+            "category": "Database",
+            "subcategory": "MS SQL Server",
+            "score": 0.731,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1634",
+            "category": "Database",
+            "subcategory": "MS SQL Server",
+            "score": 0.7122,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1653",
+            "category": "Database",
+            "subcategory": "MS SQL Server",
+            "score": 0.7004,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1625",
+            "category": "Database",
+            "subcategory": "MS SQL Server",
+            "score": 0.6974,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1647",
+            "category": "Database",
+            "subcategory": "MS SQL Server",
+            "score": 0.689,
+            "relevant": true
+          }
+        ],
+        "precision@1": 1.0,
+        "precision@3": 1.0,
+        "precision@5": 1.0,
+        "mrr": 1.0
+      }
+    ]
+  },
+  "kb_retrieval": {
+    "top1_mapped_accuracy": 1.0,
+    "top3_mapped_hit_rate": 1.0,
+    "top3_category_hit_rate": 1.0,
+    "num_queries": 7,
+    "num_with_mapping": 7,
+    "per_query": [
+      {
+        "ticket_id": "DEMO-001",
+        "expected_category": "Network",
+        "expected_subcategory": "VPN",
+        "expected_kb_ids": [
+          "KB-0018",
+          "KB-0019"
+        ],
+        "has_mapping": true,
+        "top_3": [
+          {
+            "kb_id": "KB-0018",
+            "title": "VPN will not connect or repeatedly disconnects",
+            "subcategory": "VPN",
+            "relevance_score": 0.7908,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0019",
+            "title": "VPN is slow because of routing, gateway load, or tunnel configuration",
+            "subcategory": "VPN",
+            "relevance_score": 0.5881,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0020",
+            "title": "Cannot authenticate to the corporate Wi-Fi network",
+            "subcategory": "WiFi",
+            "relevance_score": 0.5221,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": false
+          }
+        ],
+        "any_mapped_match_in_top3": true,
+        "any_category_match_in_top3": true,
+        "top1_mapped_match": true
+      },
+      {
+        "ticket_id": "DEMO-002",
+        "expected_category": "Database",
+        "expected_subcategory": "Oracle",
+        "expected_kb_ids": [
+          "KB-0001",
+          "KB-0002",
+          "KB-0003",
+          "KB-0004",
+          "KB-0005"
+        ],
+        "has_mapping": true,
+        "top_3": [
+          {
+            "kb_id": "KB-0001",
+            "title": "Slow SQL queries caused by missing or ineffective indexes",
+            "subcategory": "DB performance",
+            "relevance_score": 0.7459,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0002",
+            "title": "Database connection pool exhausted",
+            "subcategory": "DB performance",
+            "relevance_score": 0.6144,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0004",
+            "title": "Database login fails because credentials expired or rotated",
+            "subcategory": "DB access",
+            "relevance_score": 0.5456,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          }
+        ],
+        "any_mapped_match_in_top3": true,
+        "any_category_match_in_top3": true,
+        "top1_mapped_match": true
+      },
+      {
+        "ticket_id": "DEMO-003",
+        "expected_category": "Hardware",
+        "expected_subcategory": "Monitor",
+        "expected_kb_ids": [
+          "KB-0008"
+        ],
+        "has_mapping": true,
+        "top_3": [
+          {
+            "kb_id": "KB-0008",
+            "title": "External monitor is not detected or displays incorrectly",
+            "subcategory": "Monitor",
+            "relevance_score": 0.7793,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0006",
+            "title": "Laptop fails to boot or repeatedly shows a blue screen",
+            "subcategory": "Laptop",
+            "relevance_score": 0.5292,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": false
+          },
+          {
+            "kb_id": "KB-0021",
+            "title": "Wi-Fi disconnects intermittently in particular office areas",
+            "subcategory": "WiFi",
+            "relevance_score": 0.4321,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": false
+          }
+        ],
+        "any_mapped_match_in_top3": true,
+        "any_category_match_in_top3": true,
+        "top1_mapped_match": true
+      },
+      {
+        "ticket_id": "DEMO-004",
+        "expected_category": "Software",
+        "expected_subcategory": "Email",
+        "expected_kb_ids": [
+          "KB-0015"
+        ],
+        "has_mapping": true,
+        "top_3": [
+          {
+            "kb_id": "KB-0015",
+            "title": "Set up corporate email on an approved mobile device",
+            "subcategory": "How-to question",
+            "relevance_score": 0.4727,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0029",
+            "title": "Application crashes on startup because a runtime or dependency is missing",
+            "subcategory": "Application error",
+            "relevance_score": 0.401,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": false
+          },
+          {
+            "kb_id": "KB-0002",
+            "title": "Database connection pool exhausted",
+            "subcategory": "DB performance",
+            "relevance_score": 0.3736,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": false
+          }
+        ],
+        "any_mapped_match_in_top3": true,
+        "any_category_match_in_top3": true,
+        "top1_mapped_match": true
+      },
+      {
+        "ticket_id": "DEMO-005",
+        "expected_category": "Network",
+        "expected_subcategory": "VPN",
+        "expected_kb_ids": [
+          "KB-0018",
+          "KB-0019"
+        ],
+        "has_mapping": true,
+        "top_3": [
+          {
+            "kb_id": "KB-0018",
+            "title": "VPN will not connect or repeatedly disconnects",
+            "subcategory": "VPN",
+            "relevance_score": 0.6922,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0019",
+            "title": "VPN is slow because of routing, gateway load, or tunnel configuration",
+            "subcategory": "VPN",
+            "relevance_score": 0.6877,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0007",
+            "title": "Laptop battery drains quickly or will not charge",
+            "subcategory": "Laptop",
+            "relevance_score": 0.488,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": false
+          }
+        ],
+        "any_mapped_match_in_top3": true,
+        "any_category_match_in_top3": true,
+        "top1_mapped_match": true
+      },
+      {
+        "ticket_id": "DEMO-006",
+        "expected_category": "Network",
+        "expected_subcategory": "Wireless",
+        "expected_kb_ids": [
+          "KB-0020",
+          "KB-0021"
+        ],
+        "has_mapping": true,
+        "top_3": [
+          {
+            "kb_id": "KB-0021",
+            "title": "Wi-Fi disconnects intermittently in particular office areas",
+            "subcategory": "WiFi",
+            "relevance_score": 0.7898,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0020",
+            "title": "Cannot authenticate to the corporate Wi-Fi network",
+            "subcategory": "WiFi",
+            "relevance_score": 0.5921,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0012",
+            "title": "Bluetooth keyboard or mouse disconnects or will not pair",
+            "subcategory": "Keyboard/Mouse",
+            "relevance_score": 0.4828,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": false
+          }
+        ],
+        "any_mapped_match_in_top3": true,
+        "any_category_match_in_top3": true,
+        "top1_mapped_match": true
+      },
+      {
+        "ticket_id": "DEMO-007",
+        "expected_category": "Database",
+        "expected_subcategory": "MS SQL Server",
+        "expected_kb_ids": [
+          "KB-0001",
+          "KB-0002",
+          "KB-0003",
+          "KB-0004",
+          "KB-0005"
+        ],
+        "has_mapping": true,
+        "top_3": [
+          {
+            "kb_id": "KB-0003",
+            "title": "Database account locked or missing required permissions",
+            "subcategory": "DB access",
+            "relevance_score": 0.6684,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0004",
+            "title": "Database login fails because credentials expired or rotated",
+            "subcategory": "DB access",
+            "relevance_score": 0.628,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          },
+          {
+            "kb_id": "KB-0002",
+            "title": "Database connection pool exhausted",
+            "subcategory": "DB performance",
+            "relevance_score": 0.5216,
+            "retrieval_source": "vector_fallback",
+            "in_expected_mapping": true
+          }
+        ],
+        "any_mapped_match_in_top3": true,
+        "any_category_match_in_top3": true,
+        "top1_mapped_match": true
+      }
+    ]
+  }
+}

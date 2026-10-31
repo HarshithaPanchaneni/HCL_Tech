@@ -1,4 +1,16 @@
+# Python virtual environment and cache
 .venv/
 __pycache__/
 *.pyc
+
+# ChromaDB databases (generated locally)
 chroma_db/
+data/processed/chroma_db/
+
+# Project-specific generated or private files
+it_ticket_kb_implementation/
+it_ticket_kb_hybrid_implementation/
+
+# Hackathon prompt files
+hackathon-prompts.md
+hackathon-prompts_updated.md
