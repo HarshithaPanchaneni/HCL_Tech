@@ -11,17 +11,17 @@
         "expected_category": "Network",
         "top_5": [
           {
-            "id": "TKT-1311",
-            "category": "Network",
-            "subcategory": "VPN",
-            "score": 0.7703,
-            "relevant": true
-          },
-          {
             "id": "TKT-1361",
             "category": "Network",
             "subcategory": "VPN",
-            "score": 0.738,
+            "score": 0.741,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1311",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.7386,
             "relevant": true
           },
           {
@@ -32,17 +32,17 @@
             "relevant": true
           },
           {
-            "id": "TKT-1326",
+            "id": "TKT-1332",
             "category": "Network",
             "subcategory": "VPN",
-            "score": 0.7062,
+            "score": 0.6868,
             "relevant": true
           },
           {
-            "id": "TKT-1313",
+            "id": "TKT-1301",
             "category": "Network",
             "subcategory": "VPN",
-            "score": 0.6945,
+            "score": 0.6843,
             "relevant": true
           }
         ],
@@ -56,17 +56,17 @@
         "expected_category": "Database",
         "top_5": [
           {
+            "id": "TKT-1701",
+            "category": "Database",
+            "subcategory": "Oracle",
+            "score": 0.8052,
+            "relevant": true
+          },
+          {
             "id": "TKT-1751",
             "category": "Database",
             "subcategory": "Oracle",
             "score": 0.7947,
-            "relevant": true
-          },
-          {
-            "id": "TKT-1701",
-            "category": "Database",
-            "subcategory": "Oracle",
-            "score": 0.7868,
             "relevant": true
           },
           {
@@ -80,14 +80,14 @@
             "id": "TKT-1744",
             "category": "Database",
             "subcategory": "Oracle",
-            "score": 0.775,
+            "score": 0.7673,
             "relevant": true
           },
           {
-            "id": "TKT-1706",
+            "id": "TKT-1734",
             "category": "Database",
             "subcategory": "Oracle",
-            "score": 0.755,
+            "score": 0.7399,
             "relevant": true
           }
         ],
@@ -111,28 +111,28 @@
             "id": "TKT-0814",
             "category": "Hardware",
             "subcategory": "Monitor",
-            "score": 0.7007,
+            "score": 0.7042,
             "relevant": true
           },
           {
             "id": "TKT-0834",
             "category": "Hardware",
             "subcategory": "Monitor",
-            "score": 0.6603,
-            "relevant": true
-          },
-          {
-            "id": "TKT-0828",
-            "category": "Hardware",
-            "subcategory": "Monitor",
-            "score": 0.652,
+            "score": 0.6592,
             "relevant": true
           },
           {
             "id": "TKT-0884",
             "category": "Hardware",
             "subcategory": "Monitor",
-            "score": 0.6474,
+            "score": 0.6434,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0828",
+            "category": "Hardware",
+            "subcategory": "Monitor",
+            "score": 0.6409,
             "relevant": true
           }
         ],
@@ -146,38 +146,38 @@
         "expected_category": "Software",
         "top_5": [
           {
-            "id": "TKT-0290",
-            "category": "Software",
-            "subcategory": "Email",
-            "score": 0.6627,
-            "relevant": true
-          },
-          {
             "id": "TKT-0240",
             "category": "Software",
             "subcategory": "Email",
-            "score": 0.5967,
+            "score": 0.6897,
             "relevant": true
           },
           {
-            "id": "TKT-0236",
+            "id": "TKT-0290",
             "category": "Software",
             "subcategory": "Email",
-            "score": 0.5755,
+            "score": 0.6659,
             "relevant": true
           },
           {
-            "id": "TKT-0205",
+            "id": "TKT-0216",
             "category": "Software",
             "subcategory": "Email",
-            "score": 0.5751,
+            "score": 0.608,
             "relevant": true
           },
           {
-            "id": "TKT-0226",
+            "id": "TKT-0254",
             "category": "Software",
             "subcategory": "Email",
-            "score": 0.5743,
+            "score": 0.5626,
+            "relevant": true
+          },
+          {
+            "id": "TKT-0285",
+            "category": "Software",
+            "subcategory": "Email",
+            "score": 0.5428,
             "relevant": true
           }
         ],
@@ -194,21 +194,7 @@
             "id": "TKT-1341",
             "category": "Network",
             "subcategory": "VPN",
-            "score": 0.6776,
-            "relevant": true
-          },
-          {
-            "id": "TKT-1314",
-            "category": "Network",
-            "subcategory": "VPN",
-            "score": 0.6538,
-            "relevant": true
-          },
-          {
-            "id": "TKT-1303",
-            "category": "Network",
-            "subcategory": "VPN",
-            "score": 0.652,
+            "score": 0.6644,
             "relevant": true
           },
           {
@@ -223,6 +209,20 @@
             "category": "Network",
             "subcategory": "VPN",
             "score": 0.6486,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1351",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.644,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1357",
+            "category": "Network",
+            "subcategory": "VPN",
+            "score": 0.6432,
             "relevant": true
           }
         ],
@@ -239,7 +239,14 @@
             "id": "TKT-1432",
             "category": "Network",
             "subcategory": "Wireless",
-            "score": 0.6551,
+            "score": 0.653,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1407",
+            "category": "Network",
+            "subcategory": "Wireless",
+            "score": 0.6414,
             "relevant": true
           },
           {
@@ -257,17 +264,10 @@
             "relevant": true
           },
           {
-            "id": "TKT-1407",
+            "id": "TKT-1445",
             "category": "Network",
             "subcategory": "Wireless",
-            "score": 0.6254,
-            "relevant": true
-          },
-          {
-            "id": "TKT-1417",
-            "category": "Network",
-            "subcategory": "Wireless",
-            "score": 0.6206,
+            "score": 0.6213,
             "relevant": true
           }
         ],
@@ -284,14 +284,7 @@
             "id": "TKT-1603",
             "category": "Database",
             "subcategory": "MS SQL Server",
-            "score": 0.731,
-            "relevant": true
-          },
-          {
-            "id": "TKT-1634",
-            "category": "Database",
-            "subcategory": "MS SQL Server",
-            "score": 0.7122,
+            "score": 0.7225,
             "relevant": true
           },
           {
@@ -302,17 +295,24 @@
             "relevant": true
           },
           {
-            "id": "TKT-1625",
+            "id": "TKT-1601",
             "category": "Database",
             "subcategory": "MS SQL Server",
-            "score": 0.6974,
+            "score": 0.6846,
             "relevant": true
           },
           {
-            "id": "TKT-1647",
+            "id": "TKT-1634",
             "category": "Database",
             "subcategory": "MS SQL Server",
-            "score": 0.689,
+            "score": 0.6809,
+            "relevant": true
+          },
+          {
+            "id": "TKT-1651",
+            "category": "Database",
+            "subcategory": "MS SQL Server",
+            "score": 0.6744,
             "relevant": true
           }
         ],

@@ -1,6 +1,16 @@
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Optional
+
+# Auto-load .env if present
+_env_path = Path(__file__).resolve().parents[1] / ".env"
+if _env_path.is_file():
+    for _line in _env_path.read_text(encoding="utf-8").splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _v = _line.split("=", 1)
+            os.environ.setdefault(_k.strip(), _v.strip().strip("'\""))
 
 # === LLM PROVIDER CONFIG — Switch via environment variable ===
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")  # "groq" or "ollama"
@@ -10,8 +20,8 @@ if LLM_PROVIDER == "ollama":
     LLM_BASE_URL = "http://localhost:11434/v1"
     LLM_API_KEY = "ollama"  # Ollama ignores keys but openai package requires one
 else:  # groq (default)
-    LLM_MODEL = "llama-3.1-70b-versatile"
-    LLM_BASE_URL = "https://api.groq.com/openai/v1"
+    LLM_MODEL = os.getenv("LLM_MODEL", "llama-3.1-8b-instant")
+    LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.groq.com/openai/v1")
     LLM_API_KEY = os.getenv("GROQ_API_KEY")
 
 # === SHARED DATA MODELS — DO NOT CHANGE WITHOUT TELLING THE TEAM ===
@@ -103,7 +113,7 @@ TOP_K_KB = 3
 VECTOR_DB_PATH = "data/processed/chroma_db"
 TICKET_COLLECTION = "tickets"
 KB_COLLECTION = "knowledge_base"
-# Multilingual model — ticket corpus is Italian, KB is English
+# Multilingual model — supports both ticket corpus and English KB
 EMBEDDING_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"
 KB_PATH = "data/knowledge_base/articles.json"
 KB_MAPPING_PATH = "data/knowledge_base/subcategory_to_kb.json"
@@ -143,4 +153,6 @@ SUBCATEGORY_TO_KB = {
 def get_llm_client():
     """Returns an OpenAI-compatible client configured for current provider."""
     from openai import OpenAI
+    if not LLM_API_KEY:
+        raise RuntimeError("No LLM API key configured — set one in the sidebar.")
     return OpenAI(base_url=LLM_BASE_URL, api_key=LLM_API_KEY)

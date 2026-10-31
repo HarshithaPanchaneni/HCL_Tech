@@ -1,8 +1,9 @@
-"""Load, clean, and embed the IT ticket dataset into ChromaDB.
+"""Load, clean, translate, and embed the IT ticket dataset into ChromaDB.
 
 Primary source: data/raw/Dataset_ticket.xlsx (Category, Subcategory, Text — Italian)
 Fallback: HuggingFace Noise144/ticket_classification_IT_EN
 18 subcategories, 100 tickets each, 1800 total.
+Tickets are translated from Italian to English using argos-translate (offline).
 
 Usage: python -m src.data_pipeline
 """
@@ -124,6 +125,33 @@ def clean_tickets(raw_rows: list[dict]) -> list[dict]:
     return tickets
 
 
+def translate_tickets(tickets: list[dict]) -> list[dict]:
+    """Translate Italian tickets to English using argos-translate (offline)."""
+    import argostranslate.translate
+    import argostranslate.package
+
+    installed = argostranslate.package.get_installed_packages()
+    has_it_en = any(p.from_code == "it" and p.to_code == "en" for p in installed)
+    if not has_it_en:
+        argostranslate.package.update_package_index()
+        pkgs = argostranslate.package.get_available_packages()
+        it_en = next(p for p in pkgs if p.from_code == "it" and p.to_code == "en")
+        argostranslate.package.install_from_path(it_en.download())
+
+    for i, t in enumerate(tickets):
+        if t.get("metadata", {}).get("language") == "it":
+            original = t["description"]
+            translated = argostranslate.translate.translate(original, "it", "en")
+            t["title"] = _extract_title(translated)
+            t["description"] = translated
+            t["metadata"]["language"] = "en"
+            t["metadata"]["original_it"] = original
+        if (i + 1) % 200 == 0:
+            print(f"  Translated {i+1}/{len(tickets)}...")
+
+    return tickets
+
+
 def save_tickets(tickets: list[dict]) -> Path:
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     TICKETS_JSON.write_text(json.dumps(tickets, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -185,6 +213,10 @@ def main() -> None:
     print("Cleaning and normalizing tickets...")
     tickets = clean_tickets(raw)
     print(f"Cleaned to {len(tickets)} unique tickets.")
+
+    print("Translating Italian tickets to English...")
+    tickets = translate_tickets(tickets)
+    print("Translation complete.")
 
     path = save_tickets(tickets)
     print(f"Saved to {path}")

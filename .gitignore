@@ -1,8 +1,7 @@
 .venv/
 __pycache__/
 *.pyc
+.~lock.*
 data/processed/chroma_db/
 it_ticket_kb_implementation/
 it_ticket_kb_hybrid_implementation/
-hackathon-prompts.md
-hackathon-prompts_updated.md

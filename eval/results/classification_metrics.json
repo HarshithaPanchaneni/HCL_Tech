@@ -1,0 +1,91 @@
+{
+  "num_evaluated": 7,
+  "category_accuracy": 0.7143,
+  "subcategory_accuracy": 0.7143,
+  "details": [
+    {
+      "id": "DEMO-001",
+      "title": "Can't connect to corporate VPN from home office",
+      "expected_category": "Network",
+      "expected_subcategory": "VPN",
+      "predicted_category": "Network",
+      "predicted_subcategory": "VPN",
+      "predicted_priority": "P3",
+      "confidence": 0.5,
+      "category_match": true,
+      "subcategory_match": true
+    },
+    {
+      "id": "DEMO-002",
+      "title": "Oracle database queries running very slow, reports taking 10+ minutes",
+      "expected_category": "Database",
+      "expected_subcategory": "Oracle",
+      "predicted_category": "Database",
+      "predicted_subcategory": "Oracle",
+      "predicted_priority": "P2",
+      "confidence": 0.5,
+      "category_match": true,
+      "subcategory_match": true
+    },
+    {
+      "id": "DEMO-003",
+      "title": "External monitor goes black intermittently after Windows update",
+      "expected_category": "Hardware",
+      "expected_subcategory": "Monitor",
+      "predicted_category": "Hardware",
+      "predicted_subcategory": "Monitor",
+      "predicted_priority": "P2",
+      "confidence": 0.5,
+      "category_match": true,
+      "subcategory_match": true
+    },
+    {
+      "id": "DEMO-004",
+      "title": "Outlook keeps crashing when opening attachments",
+      "expected_category": "Software",
+      "expected_subcategory": "Email",
+      "predicted_category": "Software",
+      "predicted_subcategory": "Email",
+      "predicted_priority": "P3",
+      "confidence": 0.5,
+      "category_match": true,
+      "subcategory_match": true
+    },
+    {
+      "id": "DEMO-005",
+      "title": "VPN keeps dropping and laptop overheating at the same time",
+      "expected_category": "Network",
+      "expected_subcategory": "VPN",
+      "predicted_category": "Hardware",
+      "predicted_subcategory": "CPU",
+      "predicted_priority": "P3",
+      "confidence": 0.5,
+      "category_match": false,
+      "subcategory_match": false
+    },
+    {
+      "id": "DEMO-006",
+      "title": "WiFi disconnects in conference rooms on 2nd floor",
+      "expected_category": "Network",
+      "expected_subcategory": "Wireless",
+      "predicted_category": "Network",
+      "predicted_subcategory": "Wireless",
+      "predicted_priority": "P3",
+      "confidence": 0.5,
+      "category_match": true,
+      "subcategory_match": true
+    },
+    {
+      "id": "DEMO-007",
+      "title": "MS SQL Server login fails for new team member",
+      "expected_category": "Database",
+      "expected_subcategory": "MS SQL Server",
+      "predicted_category": "Software",
+      "predicted_subcategory": "Email",
+      "predicted_priority": "P3",
+      "confidence": 0.5,
+      "category_match": false,
+      "subcategory_match": false
+    }
+  ]
+}

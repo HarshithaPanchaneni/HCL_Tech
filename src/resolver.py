@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 
+import src.config as _cfg
 from src.config import (
     ClassificationResult,
     Evidence,
@@ -13,7 +14,6 @@ from src.config import (
     SimilarTicket,
     Ticket,
     get_llm_client,
-    LLM_MODEL,
 )
 
 _ESCALATION_KEYWORDS = [
@@ -165,16 +165,33 @@ def recommend_resolution(
 
     try:
         client = get_llm_client()
-        response = client.chat.completions.create(
-            model=LLM_MODEL,
-            messages=[
-                {"role": "system", "content": _SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=0.2,
-            response_format={"type": "json_object"},
-            timeout=20,
-        )
+        try:
+            response = client.chat.completions.create(
+                model=_cfg.LLM_MODEL,
+                messages=[
+                    {"role": "system", "content": _SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=0.2,
+                response_format={"type": "json_object"},
+                timeout=20,
+            )
+        except Exception as model_err:
+            if "404" in str(model_err) or "NotFoundError" in type(model_err).__name__:
+                # Model not accessible; auto-retry with standard 8B instant model
+                response = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[
+                        {"role": "system", "content": _SYSTEM_PROMPT},
+                        {"role": "user", "content": prompt},
+                    ],
+                    temperature=0.2,
+                    response_format={"type": "json_object"},
+                    timeout=20,
+                )
+            else:
+                raise model_err
+
         raw = json.loads(response.choices[0].message.content)
 
         evidence = []
@@ -199,5 +216,7 @@ def recommend_resolution(
             knowledge_articles_used=[str(k) for k in raw.get("knowledge_articles_used", [])],
         )
 
-    except Exception:
-        return _fallback_resolution(knowledge_articles)
+    except Exception as e:
+        rec = _fallback_resolution(knowledge_articles)
+        rec.recommended_resolution = f"[Note: LLM synthesis error ({type(e).__name__}: {e}). Showing raw KB steps below]\n\n" + rec.recommended_resolution
+        return rec

@@ -7,13 +7,13 @@ import re
 import time
 from typing import Optional
 
+import src.config as _cfg
 from src.config import (
     CONFIDENCE_THRESHOLD,
     TAXONOMY,
     ClassificationResult,
     Ticket,
     get_llm_client,
-    LLM_MODEL,
 )
 
 # Flatten taxonomy for validation
@@ -150,16 +150,33 @@ def classify_ticket(ticket: Ticket) -> ClassificationResult:
 
     try:
         client = get_llm_client()
-        response = client.chat.completions.create(
-            model=LLM_MODEL,
-            messages=[
-                {"role": "system", "content": _SYSTEM_PROMPT},
-                {"role": "user", "content": user_msg},
-            ],
-            temperature=0.1,
-            response_format={"type": "json_object"},
-            timeout=15,
-        )
+        try:
+            response = client.chat.completions.create(
+                model=_cfg.LLM_MODEL,
+                messages=[
+                    {"role": "system", "content": _SYSTEM_PROMPT},
+                    {"role": "user", "content": user_msg},
+                ],
+                temperature=0.1,
+                response_format={"type": "json_object"},
+                timeout=15,
+            )
+        except Exception as model_err:
+            if "404" in str(model_err) or "NotFoundError" in type(model_err).__name__:
+                # Model not accessible; auto-retry with standard 8B instant model
+                response = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[
+                        {"role": "system", "content": _SYSTEM_PROMPT},
+                        {"role": "user", "content": user_msg},
+                    ],
+                    temperature=0.1,
+                    response_format={"type": "json_object"},
+                    timeout=15,
+                )
+            else:
+                raise model_err
+
         raw = json.loads(response.choices[0].message.content)
 
         category = str(raw.get("category", "")).strip()
@@ -201,8 +218,10 @@ def classify_ticket(ticket: Ticket) -> ClassificationResult:
             secondary_confidence=sec_conf,
         )
 
-    except Exception:
-        return classify_ticket_keyword_fallback(ticket)
+    except Exception as e:
+        fallback = classify_ticket_keyword_fallback(ticket)
+        fallback.reasoning = f"Classified using keyword fallback (LLM error: {type(e).__name__} - {e})"
+        return fallback
 
 
 def classify_batch(tickets: list[Ticket], delay: float = 0.5) -> list[ClassificationResult]:
